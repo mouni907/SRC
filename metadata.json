@@ -1,0 +1,6 @@
+{
+  "name": "DigiClear — Automated No-Dues System",
+  "description": "Automated No-Dues & Digital Clearance System for university campus governance with real-time multi-department verification and digital certificate generation.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
