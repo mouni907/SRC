@@ -31,15 +31,22 @@ export default function Certificate() {
   const [certificateVisible, setCertificateVisible] = useState(false);
   const certificatePreviewRef = useRef(null);
 
-  const certificateId = 'NDC-2026-00001';
-  const issueDate = '06 September 2026';
-  const verificationUrl = `${window.location.origin}/verify/${certificateId}`;
+  const certificateId = clearanceRequest?.certificate?.id || null;
+  const issueDate = clearanceRequest?.certificate?.issuedAt
+    ? new Date(clearanceRequest.certificate.issuedAt).toLocaleDateString()
+    : null;
+  const verificationUrl = certificateId ? `${window.location.origin}/verify/${certificateId}` : null;
   const overallStatus = clearanceRequest?.overallStatus || 'pending';
   const certificateApproved = isCompleted || overallStatus === 'approved' || overallStatus === 'completed';
   const rejectedDepartment = Object.values(clearanceRequest?.departments || {}).find((dept) => dept.status === 'rejected');
   const approvalPercent = Math.round((approvedCount / 4) * 100);
 
   useEffect(() => {
+    if (!verificationUrl) {
+      setQrCodeDataUrl('');
+      return;
+    }
+
     QRCode.toDataURL(verificationUrl, {
       width: 140,
       margin: 1,
@@ -79,7 +86,8 @@ export default function Certificate() {
     try {
       await downloadCertificatePDF('certificate-print-area', student, {
         id: certificateId,
-        issueDate: issueDate
+        issueDate,
+        departments: clearanceRequest?.departments
       });
       setDownloadSuccess(true);
       setTimeout(() => setDownloadSuccess(false), 4500);
@@ -225,7 +233,7 @@ export default function Certificate() {
               type="button"
               onClick={handleDownload}
               disabled={downloading || !certificateVisible}
-              className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 text-xs font-semibold shadow-sm transition-colors cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
+              className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 text-xs font-semibold shadow-sm transition-colors disabled:opacity-75 disabled:cursor-not-allowed"
             >
               <Download className="w-4 h-4" />
               <span>{downloading ? 'Generating PDF...' : 'Download Certificate'}</span>

@@ -16,7 +16,8 @@ import {
 
 export default function AdminDashboard() {
   const { user, logout } = useAuth();
-  const { clearanceRequest, student } = useClearance();
+  const { clearanceRequest, student, pendingCount, rejectedCount } = useClearance();
+  const hasRequest = Boolean(clearanceRequest?.id);
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900 antialiased">
@@ -74,23 +75,23 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
           <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
             <span className="text-xs text-slate-400 font-medium uppercase">Total Requests</span>
-            <p className="text-2xl font-bold text-slate-900 mt-2">124</p>
-            <span className="text-[11px] text-slate-500 mt-0.5 block">Graduating Class 2026</span>
+            <p className="text-2xl font-bold text-slate-900 mt-2">{hasRequest ? 1 : 0}</p>
+            <span className="text-[11px] text-slate-500 mt-0.5 block">Submitted applications</span>
           </div>
           <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
             <span className="text-xs text-slate-400 font-medium uppercase">Fully Approved</span>
-            <p className="text-2xl font-bold text-emerald-600 mt-2">78</p>
-            <span className="text-[11px] text-slate-500 mt-0.5 block">Certificates Issued</span>
+            <p className="text-2xl font-bold text-emerald-600 mt-2">{clearanceRequest?.overallStatus === 'approved' ? 1 : 0}</p>
+            <span className="text-[11px] text-slate-500 mt-0.5 block">Fully cleared requests</span>
           </div>
           <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
             <span className="text-xs text-slate-400 font-medium uppercase">In Progress</span>
-            <p className="text-2xl font-bold text-blue-600 mt-2">42</p>
-            <span className="text-[11px] text-slate-500 mt-0.5 block">Pending Department Desks</span>
+            <p className="text-2xl font-bold text-blue-600 mt-2">{pendingCount}</p>
+            <span className="text-[11px] text-slate-500 mt-0.5 block">Pending department reviews</span>
           </div>
           <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
             <span className="text-xs text-slate-400 font-medium uppercase">Flagged Dues</span>
-            <p className="text-2xl font-bold text-rose-600 mt-2">4</p>
-            <span className="text-[11px] text-slate-500 mt-0.5 block">Requires Settlement</span>
+            <p className="text-2xl font-bold text-rose-600 mt-2">{rejectedCount}</p>
+            <span className="text-[11px] text-slate-500 mt-0.5 block">Flagged department reviews</span>
           </div>
         </div>
 
@@ -121,7 +122,7 @@ export default function AdminDashboard() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-slate-700">
-                <tr className="hover:bg-slate-50/70">
+                {hasRequest && <tr className="hover:bg-slate-50/70">
                   <td className="py-3.5 px-4 font-mono font-semibold text-blue-600">#{clearanceRequest.id}</td>
                   <td className="py-3.5 px-4 font-medium text-slate-900">{student.name} ({student.collegeId})</td>
                   <td className="py-3.5 px-4">{student.department}</td>
@@ -130,19 +131,10 @@ export default function AdminDashboard() {
                   <td className="py-3.5 px-4"><StatusBadge status={clearanceRequest.departments.sports.status} /></td>
                   <td className="py-3.5 px-4"><StatusBadge status={clearanceRequest.departments.accounts.status} /></td>
                   <td className="py-3.5 px-4 text-right"><StatusBadge status={clearanceRequest.overallStatus} /></td>
-                </tr>
-                <tr className="hover:bg-slate-50/70 opacity-80">
-                  <td className="py-3.5 px-4 font-mono font-semibold text-blue-600">#REQ-991205</td>
-                  <td className="py-3.5 px-4 font-medium text-slate-900">Priya Patel (STU/2024/773)</td>
-                  <td className="py-3.5 px-4">Electronics &amp; Communication</td>
-                  <td className="py-3.5 px-4"><StatusBadge status="approved" /></td>
-                  <td className="py-3.5 px-4"><StatusBadge status="approved" /></td>
-                  <td className="py-3.5 px-4"><StatusBadge status="approved" /></td>
-                  <td className="py-3.5 px-4"><StatusBadge status="approved" /></td>
-                  <td className="py-3.5 px-4 text-right"><StatusBadge status="completed" /></td>
-                </tr>
+                </tr>}
               </tbody>
             </table>
+            {!hasRequest && <div className="p-10 text-center text-sm text-slate-500">No clearance requests have been submitted yet.</div>}
           </div>
         </div>
       </main>

@@ -1,15 +1,10 @@
 const departmentOrder = ['library', 'hostel', 'sports', 'accounts'];
 
 export const clearanceStore = {
-  id: 'REQ-991204',
-  studentId: 'STU001',
-  overallStatus: 'pending',
-  departments: {
-    library: { status: 'approved', reason: 'Library dues cleared' },
-    hostel: { status: 'pending', reason: 'Hostel inspection pending' },
-    sports: { status: 'approved', reason: 'Sports equipment returned' },
-    accounts: { status: 'pending', reason: 'Accounts verification pending' }
-  },
+  id: null,
+  studentId: null,
+  overallStatus: 'not_started',
+  departments: {},
   certificate: null
 };
 
@@ -45,7 +40,7 @@ export const generateCertificateIfEligible = (studentId = clearanceStore.student
   }
 
   const certificate = {
-    id: 'NDC-2026-00001',
+    id: `NDC-${Date.now()}`,
     studentId,
     issuedAt: new Date().toISOString(),
     status: 'issued'
@@ -107,7 +102,7 @@ export const getStudentClearanceSnapshot = (studentId = clearanceStore.studentId
 
   if (snapshot.overallStatus === 'approved' && !snapshot.certificate) {
     snapshot.certificate = {
-      id: 'NDC-2026-00001',
+      id: `NDC-${Date.now()}`,
       studentId,
       issuedAt: new Date().toISOString(),
       status: 'issued'

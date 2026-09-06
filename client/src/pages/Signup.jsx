@@ -143,7 +143,7 @@ export default function Signup() {
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1.5" htmlFor="signup-name">Full name</label>
               <div className="relative">
-                <input id="signup-name" type="text" required autoComplete="name" placeholder="e.g. Arjun Sharma" value={form.name} onChange={updateField('name')} className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+                <input id="signup-name" type="text" required autoComplete="name" placeholder="Enter your full name" value={form.name} onChange={updateField('name')} className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
                 <UserRound className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
               </div>
             </div>

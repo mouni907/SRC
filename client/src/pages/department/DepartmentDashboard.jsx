@@ -7,11 +7,11 @@ import { getDepartmentMeta, getDepartmentRequest, getDepartmentStats } from './d
 
 export default function DepartmentDashboard() {
   const { user } = useAuth();
-  const { clearanceRequest } = useClearance();
-  const department = user?.department || 'sports';
+  const { clearanceRequest, student } = useClearance();
+  const department = user?.department || 'library';
   const meta = getDepartmentMeta(department);
-  const request = getDepartmentRequest(clearanceRequest, department);
-  const stats = getDepartmentStats(clearanceRequest, department);
+  const request = getDepartmentRequest(clearanceRequest, student, department);
+  const stats = getDepartmentStats(clearanceRequest, student, department);
   const Icon = department === 'hostel' ? Home : department === 'library' ? BookOpen : department === 'accounts' ? Landmark : Trophy;
   const cards = [
     ['Pending Requests', stats.pending, 'Awaiting verification', Clock3, 'text-amber-600'],

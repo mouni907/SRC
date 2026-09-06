@@ -35,8 +35,8 @@ export default function StudentDashboard() {
     setDownloadingCert(true);
     try {
       await downloadCertificatePDF(null, student, {
-        id: 'NDC-2026-00001',
-        issueDate: '06 September 2026'
+        id: clearanceRequest?.certificate?.id,
+        departments: clearanceRequest?.departments
       });
     } catch (e) {
       console.error(e);

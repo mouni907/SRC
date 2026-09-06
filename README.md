@@ -103,8 +103,6 @@ DigiClear/
 │   │   └── notificationService.js
 │   ├── utils/
 │   │   └── generateId.js
-│   ├── seed/
-│   │   └── seed.js
 │   ├── app.js
 │   ├── server.js
 │   ├── package.json

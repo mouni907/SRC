@@ -9,9 +9,7 @@ import {
   Building2, 
   AlertCircle,
   Eye,
-  EyeOff,
-  Sparkles,
-  CheckCircle2
+  EyeOff
 } from 'lucide-react';
 
 export default function Login() {
@@ -23,21 +21,6 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const demoAccounts = [
-    { label: 'Student (Arjun)', email: 'student1@college.edu', pass: 'student123', role: 'Student' },
-    { label: 'Library Officer', email: 'library@college.edu', pass: 'dept123', role: 'Department' },
-    { label: 'Hostel Warden', email: 'hostel@college.edu', pass: 'dept123', role: 'Department' },
-    { label: 'Accounts Officer', email: 'accounts@college.edu', pass: 'dept123', role: 'Department' },
-    { label: 'Sports Director', email: 'sports@college.edu', pass: 'dept123', role: 'Department' },
-    { label: 'Admin (Dean)', email: 'admin@college.edu', pass: 'admin123', role: 'Admin' },
-  ];
-
-  const handleQuickFill = (demo) => {
-    setEmail(demo.email);
-    setPassword(demo.pass);
-    setError('');
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -104,7 +87,7 @@ export default function Login() {
                   id="login-email"
                   type="text"
                   required
-                  placeholder="e.g. student1@college.edu or STU001"
+                  placeholder="Enter your institutional email or student ID"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
@@ -156,34 +139,6 @@ export default function Login() {
             New to DigiClear? <Link to="/signup" className="font-semibold text-blue-600 hover:text-blue-700">Choose an account type</Link>
           </p>
 
-          {/* Quick Demo Access Bar */}
-          <div className="pt-4 border-t border-slate-100 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-blue-500" />
-                Quick-Select Demo Accounts
-              </span>
-              <span className="text-[10px] text-slate-400">Click to autofill</span>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2">
-              {demoAccounts.map((demo) => (
-                <button
-                  key={demo.label}
-                  type="button"
-                  onClick={() => handleQuickFill(demo)}
-                  className="p-2 text-left bg-slate-50 hover:bg-blue-50/60 hover:border-blue-200 border border-slate-200 rounded-lg transition-all cursor-pointer group"
-                >
-                  <span className="block text-[11px] font-bold text-slate-800 group-hover:text-blue-700 truncate">
-                    {demo.label}
-                  </span>
-                  <span className="block text-[10px] text-slate-400 truncate mt-0.5">
-                    {demo.email}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
 
         {/* Institutional notice footer */}

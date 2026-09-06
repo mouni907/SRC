@@ -41,20 +41,20 @@ export const DEPARTMENT_META = {
   }
 };
 
-export const getDepartmentMeta = (department = 'sports') => (
-  DEPARTMENT_META[department] || DEPARTMENT_META.sports
+export const getDepartmentMeta = (department = 'library') => (
+  DEPARTMENT_META[department] || DEPARTMENT_META.library
 );
 
-export const getDepartmentRequest = (clearanceRequest, department = 'sports') => {
+export const getDepartmentRequest = (clearanceRequest, student, department = 'library') => {
   const deptData = clearanceRequest?.departments?.[department];
   if (!deptData) return null;
 
   return {
     id: clearanceRequest.id,
-    studentName: 'Arjun Sharma',
-    studentId: 'STU/2024/772',
-    course: 'B.Tech Computer Science',
-    semester: 'Semester VIII',
+    studentName: student?.name || '',
+    studentId: student?.collegeId || student?.studentId || '',
+    course: [student?.degree, student?.department].filter(Boolean).join(' - '),
+    semester: student?.semester || '',
     appliedAt: clearanceRequest.appliedAt,
     status: deptData.status,
     remarks: deptData.remarks,
@@ -63,12 +63,10 @@ export const getDepartmentRequest = (clearanceRequest, department = 'sports') =>
   };
 };
 
-export const getDepartmentStats = (clearanceRequest, department = 'sports') => {
-  const request = getDepartmentRequest(clearanceRequest, department);
+export const getDepartmentStats = (clearanceRequest, student, department = 'library') => {
+  const request = getDepartmentRequest(clearanceRequest, student, department);
   const counts = { total: request ? 1 : 0, pending: 0, approved: 0, rejected: 0 };
   if (request?.status && counts[request.status] !== undefined) counts[request.status] += 1;
   return counts;
 };
 
-export const getSportsRequest = (clearanceRequest) => getDepartmentRequest(clearanceRequest, 'sports');
-export const getSportsStats = (clearanceRequest) => getDepartmentStats(clearanceRequest, 'sports');

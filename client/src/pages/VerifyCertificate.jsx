@@ -12,7 +12,7 @@ import {
 
 export default function VerifyCertificate() {
   const { id } = useParams();
-  const certId = id || 'NDC-2026-00001';
+  const certId = id || null;
 
   return (
     <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8 font-sans">
@@ -35,7 +35,7 @@ export default function VerifyCertificate() {
               Digitally Verified No-Dues Certificate
             </h1>
             <p className="text-xs text-emerald-700 font-semibold uppercase tracking-wider bg-emerald-50 border border-emerald-200 inline-block px-3 py-1 rounded-full">
-              Authentic Institutional Record • Valid
+              {certId ? 'Certificate lookup requested' : 'Certificate ID required'}
             </p>
           </div>
 
@@ -44,23 +44,23 @@ export default function VerifyCertificate() {
             <div className="grid grid-cols-2 gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
               <div>
                 <span className="text-slate-400 block text-[11px]">Certificate Number</span>
-                <span className="font-mono font-bold text-slate-900 text-sm">{certId}</span>
+                <span className="font-mono font-bold text-slate-900 text-sm">{certId || 'Not provided'}</span>
               </div>
               <div>
                 <span className="text-slate-400 block text-[11px]">Issue Date</span>
-                <span className="font-semibold text-slate-900 text-sm">06 September 2026</span>
+                <span className="font-semibold text-slate-900 text-sm">Not available</span>
               </div>
               <div>
                 <span className="text-slate-400 block text-[11px]">Student Name</span>
-                <span className="font-semibold text-slate-900 text-sm">Arjun Sharma</span>
+                <span className="font-semibold text-slate-900 text-sm">Not available</span>
               </div>
               <div>
                 <span className="text-slate-400 block text-[11px]">Roll No / Registration</span>
-                <span className="font-mono font-bold text-slate-900 text-sm">STU/2024/772</span>
+                <span className="font-mono font-bold text-slate-900 text-sm">Not available</span>
               </div>
               <div>
                 <span className="text-slate-400 block text-[11px]">Academic Program</span>
-                <span className="font-semibold text-slate-900 text-sm">B.Tech Computer Science</span>
+                <span className="font-semibold text-slate-900 text-sm">Not available</span>
               </div>
               <div>
                 <span className="text-slate-400 block text-[11px]">Institution</span>
@@ -72,32 +72,13 @@ export default function VerifyCertificate() {
             <div>
               <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-2">Institutional Approvals Log</h3>
               <div className="space-y-2">
-                {[
-                  { name: 'Library Department', officer: 'Dr. R. Smith (Chief Librarian)', status: 'Approved' },
-                  { name: 'Hostel Department', officer: 'Hostel Warden Block B', status: 'Approved' },
-                  { name: 'Sports Department', officer: 'Coach S. Mehta (Sports Director)', status: 'Approved' },
-                  { name: 'Accounts Department', officer: 'Bursar & Accounts Section', status: 'Approved' },
-                ].map((dept) => (
-                  <div key={dept.name} className="flex items-center justify-between p-3 bg-emerald-50/50 border border-emerald-100 rounded-lg">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                      <div>
-                        <span className="font-semibold text-slate-800 block text-xs">{dept.name}</span>
-                        <span className="text-[10px] text-slate-500">{dept.officer}</span>
-                      </div>
-                    </div>
-                    <span className="text-[10px] font-bold text-emerald-700 uppercase bg-emerald-100 px-2 py-0.5 rounded">
-                      {dept.status}
-                    </span>
-                  </div>
-                ))}
+                <p className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-center text-xs text-slate-500">Verification details will appear when a real certificate is issued.</p>
               </div>
             </div>
           </div>
 
           <div className="pt-4 border-t border-slate-100 text-center text-[11px] text-slate-400 space-y-1">
-            <p>Signed electronically by the Controller of Examinations, RGUKT.</p>
-            <p className="font-mono text-[10px]">Cryptographic Digest: 8f4b2c9a1e7d0f3e6a5b8c7d9e0f1a2b</p>
+            <p>Certificate metadata will appear after verification.</p>
           </div>
         </div>
       </div>

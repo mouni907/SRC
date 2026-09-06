@@ -5,7 +5,7 @@ export const connectDB = async () => {
   const mongoUri = process.env.MONGODB_URI;
 
   if (!mongoUri) {
-    console.warn('[DigiClear DB] MONGODB_URI is not configured; continuing in demo mode without MongoDB.');
+    console.warn('[DigiClear DB] MONGODB_URI is not configured; continuing without MongoDB.');
     return null;
   }
 
@@ -25,7 +25,7 @@ export const connectDB = async () => {
     console.log(`[DigiClear DB] Connected to ${mongoose.connection.name}`);
     return mongoose.connection;
   } catch (error) {
-    console.warn('[DigiClear DB] MongoDB is unavailable; continuing in demo mode without a database.', error.message);
+    console.warn('[DigiClear DB] MongoDB is unavailable; continuing without a database.', error.message);
     return null;
   }
 };

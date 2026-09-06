@@ -7,7 +7,7 @@ import html2canvas from 'html2canvas';
  * with an automatic fallback to vector-drawn jsPDF if DOM capture is restricted.
  */
 export async function downloadCertificatePDF(elementId, studentData, certificateMeta = {}) {
-  const certId = certificateMeta.id || 'NDC-2026-00001';
+  const certId = certificateMeta.id || `NDC-${Date.now()}`;
   const fileName = `DigiClear_No_Dues_Certificate_${certId}.pdf`;
 
   // Attempt 1: High-fidelity DOM capture via html2canvas
@@ -97,11 +97,11 @@ export async function downloadCertificatePDF(elementId, studentData, certificate
     pdf.setTextColor(51, 65, 85);
 
     const name = studentData?.name || 'Student';
-    const roll = studentData?.collegeId || studentData?.studentId || 'STU001';
+    const roll = studentData?.collegeId || studentData?.studentId || 'Not provided';
     const hallTicket = studentData?.hallTicket || roll;
-    const degree = studentData?.degree || 'B.Tech';
-    const dept = studentData?.department || 'Engineering';
-    const batch = studentData?.batch || '2022-2026';
+    const degree = studentData?.degree || 'Not provided';
+    const dept = studentData?.department || 'Not provided';
+    const batch = studentData?.batch || 'Not provided';
 
     const bodyText = `This is to certify that ${name}, bearing University Roll No. ${roll} (Hall Ticket: ${hallTicket}), enrolled in ${degree} in ${dept}, Batch ${batch}, has satisfactorily settled all institutional liabilities, returned all issued resources, and obtained formal no-dues clearance across all statutory departments.`;
 
@@ -109,15 +109,14 @@ export async function downloadCertificatePDF(elementId, studentData, certificate
     pdf.text(splitText, 20, 62);
 
     // Department Approval Boxes
-    const depts = [
-      { name: 'Library Desk', status: 'CLEARED & APPROVED', reviewer: 'Dr. R. Smith (Chief Librarian)' },
-      { name: 'Hostel Desk', status: 'CLEARED & APPROVED', reviewer: 'Mr. K. Sharma (Hostel Warden)' },
-      { name: 'Sports Section', status: 'CLEARED & APPROVED', reviewer: 'Coach S. Mehta (Sports Director)' },
-      { name: 'Accounts Section', status: 'CLEARED & APPROVED', reviewer: 'Bursar & Accounts Section' },
-    ];
+    const depts = Object.entries(certificateMeta.departments || {}).map(([key, department]) => ({
+      name: department.name || key,
+      status: department.status || 'PENDING',
+      reviewer: department.verifiedBy || 'Not assigned'
+    }));
 
     const startX = 20;
-    const boxWidth = (pageWidth - 40 - (3 * 6)) / 4;
+    const boxWidth = depts.length ? (pageWidth - 40 - ((depts.length - 1) * 6)) / depts.length : pageWidth - 40;
     const boxY = 88;
     const boxHeight = 28;
 

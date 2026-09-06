@@ -16,18 +16,18 @@ export const ClearanceProvider = ({ children }) => {
       }
     }
     return {
-      name: user?.name || 'Arjun Sharma',
-      studentId: user?.studentId || 'STU001',
-      collegeId: user?.collegeId || 'STU/2024/772',
-      email: user?.email || 'student1@college.edu',
-      phone: '+91 98765 43210',
-      department: user?.department || 'Computer Science & Engineering',
-      degree: user?.degree || 'B.Tech (Honours)',
-      semester: user?.semester || 'Semester VIII',
-      batch: user?.batch || '2022 - 2026',
-      hallTicket: user?.hallTicket || '22041A0589',
-      cgpa: '8.84',
-      roomNo: 'Hostel Block B - Room 314'
+      name: user?.name || '',
+      studentId: user?.studentId || '',
+      collegeId: user?.collegeId || '',
+      email: user?.email || '',
+      phone: user?.phone || '',
+      department: user?.department || '',
+      degree: user?.degree || '',
+      semester: user?.semester || '',
+      batch: user?.batch || '',
+      hallTicket: user?.hallTicket || '',
+      cgpa: user?.cgpa || '',
+      roomNo: user?.roomNo || ''
     };
   });
 
@@ -42,14 +42,14 @@ export const ClearanceProvider = ({ children }) => {
             studentId: user.studentId,
             collegeId: user.collegeId || user.studentId,
             email: user.email,
-            phone: '+91 98765 43210',
-            department: user.department || 'Computer Science & Engineering',
-            degree: user.degree || 'B.Tech',
-            semester: user.semester || 'Semester VIII',
-            batch: user.batch || '2022 - 2026',
-            hallTicket: user.hallTicket || user.rollNo || user.studentId,
-            cgpa: '8.84',
-            roomNo: 'Hostel Block B - Room 314'
+            phone: user.phone || '',
+            department: user.department || '',
+            degree: user.degree || '',
+            semester: user.semester || '',
+            batch: user.batch || '',
+            hallTicket: user.hallTicket || user.rollNo || '',
+            cgpa: user.cgpa || '',
+            roomNo: user.roomNo || ''
           };
         }
         return prev;
@@ -83,90 +83,20 @@ export const ClearanceProvider = ({ children }) => {
   };
 
   const [clearanceRequest, setClearanceRequest] = useState({
-    id: 'REQ-991204',
-    appliedAt: '03 Sep 2026, 10:15 AM',
-    reason: 'Graduation & Degree Award Semester Completion',
-    overallStatus: 'pending',
-    departments: {
-      library: {
-        name: 'Library',
-        letter: 'L',
-        status: 'approved',
-        verifiedBy: 'Dr. R. Smith (Chief Librarian)',
-        verifiedAt: '04 Sep 2026, 04:30 PM',
-        remarks: 'All 6 catalog books returned in pristine condition. Zero overdue fines.'
-      },
-      hostel: {
-        name: 'Hostel',
-        letter: 'H',
-        status: 'pending',
-        verifiedBy: null,
-        verifiedAt: null,
-        remarks: 'Room inventory check scheduled for Sep 07. Key handover inspection pending.'
-      },
-      sports: {
-        name: 'Sports',
-        letter: 'S',
-        status: 'approved',
-        verifiedBy: 'Coach S. Mehta (Sports Director)',
-        verifiedAt: '04 Sep 2026, 11:20 AM',
-        remarks: 'Sports facility locker inspected & vacated. Badminton tournament kit returned.'
-      },
-      accounts: {
-        name: 'Accounts',
-        letter: 'A',
-        status: 'pending',
-        verifiedBy: null,
-        verifiedAt: null,
-        remarks: 'Pending semester mess dues of $40.00. Can be cleared at Bursar Desk or online.'
-      }
-    }
+    id: null,
+    appliedAt: null,
+    reason: '',
+    overallStatus: 'not_started',
+    departments: {}
   });
 
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      title: 'Accounts: Dues Action Required',
-      department: 'accounts',
-      message: 'Pending mess bill dues of $40.00 recorded. Please settle at administrative counter or online gateway to proceed.',
-      timestamp: '2 hours ago',
-      type: 'warning',
-      read: false
-    },
-    {
-      id: 2,
-      title: 'Library: Clearance Approved',
-      department: 'library',
-      message: 'Verified by Chief Librarian Dr. R. Smith. All textbooks accounted for with zero dues.',
-      timestamp: 'Yesterday at 4:30 PM',
-      type: 'approval',
-      read: false
-    },
-    {
-      id: 3,
-      title: 'Sports: Clearance Approved',
-      department: 'sports',
-      message: 'Verified by Sports Director Coach S. Mehta. Badminton kit and equipment inspected successfully.',
-      timestamp: '04 Sep 2026, 11:20 AM',
-      type: 'approval',
-      read: true
-    },
-    {
-      id: 4,
-      title: 'Clearance Application Submitted',
-      department: 'system',
-      message: 'Your No-Dues clearance request #REQ-991204 has been routed to Library, Hostel, Sports, and Accounts.',
-      timestamp: '03 Sep 2026, 10:15 AM',
-      type: 'system',
-      read: true
-    }
-  ]);
+  const [notifications, setNotifications] = useState([]);
 
   const deptList = Object.values(clearanceRequest.departments);
   const approvedCount = deptList.filter(d => d.status === 'approved').length;
   const pendingCount = deptList.filter(d => d.status === 'pending').length;
   const rejectedCount = deptList.filter(d => d.status === 'rejected').length;
-  const completionPercentage = Math.round((approvedCount / deptList.length) * 100);
+  const completionPercentage = deptList.length ? Math.round((approvedCount / deptList.length) * 100) : 0;
   const isCompleted = approvedCount === deptList.length;
 
   const updateDepartmentStatus = (deptKey, newStatus, remarks = '') => {
@@ -291,49 +221,6 @@ export const ClearanceProvider = ({ children }) => {
     ]);
   };
 
-  const resetToDemoState = () => {
-    setClearanceRequest({
-      id: 'REQ-991204',
-      appliedAt: '03 Sep 2026, 10:15 AM',
-      reason: 'Graduation & Degree Award Semester Completion',
-      overallStatus: 'pending',
-      departments: {
-        library: {
-          name: 'Library',
-          letter: 'L',
-          status: 'approved',
-          verifiedBy: 'Dr. R. Smith (Chief Librarian)',
-          verifiedAt: '04 Sep 2026, 04:30 PM',
-          remarks: 'All 6 catalog books returned in pristine condition. Zero overdue fines.'
-        },
-        hostel: {
-          name: 'Hostel',
-          letter: 'H',
-          status: 'pending',
-          verifiedBy: null,
-          verifiedAt: null,
-          remarks: 'Room inventory check scheduled for Sep 07. Key handover inspection pending.'
-        },
-        sports: {
-          name: 'Sports',
-          letter: 'S',
-          status: 'approved',
-          verifiedBy: 'Coach S. Mehta (Sports Director)',
-          verifiedAt: '04 Sep 2026, 11:20 AM',
-          remarks: 'Sports facility locker inspected & vacated. Badminton tournament kit returned.'
-        },
-        accounts: {
-          name: 'Accounts',
-          letter: 'A',
-          status: 'pending',
-          verifiedBy: null,
-          verifiedAt: null,
-          remarks: 'Pending semester mess dues of $40.00. Can be cleared at Bursar Desk or online.'
-        }
-      }
-    });
-  };
-
   const markNotificationAsRead = (id) => {
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
   };
@@ -356,7 +243,6 @@ export const ClearanceProvider = ({ children }) => {
       updateDepartmentStatus,
       approveAllDepartments,
       submitClearanceRequest,
-      resetToDemoState,
       markNotificationAsRead,
       markAllNotificationsAsRead
     }}>

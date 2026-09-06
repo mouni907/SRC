@@ -4,19 +4,12 @@ import dotenv from 'dotenv';
 import { createServer as createViteServer } from 'vite';
 import app from './server/app.js';
 import connectDB from './server/config/db.js';
-import { seedDemoUsers } from './server/seed/seed.js';
 
 dotenv.config();
 const PORT = 3000;
 
 async function startServer() {
-  const db = await connectDB();
-
-  if (db) {
-    await seedDemoUsers();
-  } else {
-    console.log('[DigiClear] Running in demo mode without MongoDB. Auth data is loaded in-memory for local preview.');
-  }
+  await connectDB();
 
   // Vite middleware for development
   if (process.env.NODE_ENV !== 'production') {

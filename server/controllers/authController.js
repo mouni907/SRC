@@ -1,86 +1,31 @@
 import jwt from 'jsonwebtoken';
+import mongoose from 'mongoose';
+import User from '../models/User.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'digiclear_institutional_jwt_secret_2026';
 
-export const USERS = [
-  {
-    id: 'usr_admin',
-    name: 'Dr. V. Rao (Dean of Academics)',
-    email: 'admin@college.edu',
-    password: 'admin123',
-    role: 'admin',
-    department: null,
-    avatar: 'A'
-  },
-  {
-    id: 'usr_lib',
-    name: 'Dr. R. Smith (Chief Librarian)',
-    email: 'library@college.edu',
-    password: 'dept123',
-    role: 'department',
-    department: 'library',
-    avatar: 'L'
-  },
-  {
-    id: 'usr_hostel',
-    name: 'Mr. K. Sharma (Hostel Warden)',
-    email: 'hostel@college.edu',
-    password: 'dept123',
-    role: 'department',
-    department: 'hostel',
-    avatar: 'H'
-  },
-  {
-    id: 'usr_sports',
-    name: 'Coach S. Mehta (Sports Director)',
-    email: 'sports@college.edu',
-    password: 'dept123',
-    role: 'department',
-    department: 'sports',
-    avatar: 'S'
-  },
-  {
-    id: 'usr_accounts',
-    name: 'Bursar & Accounts Section',
-    email: 'accounts@college.edu',
-    password: 'dept123',
-    role: 'department',
-    department: 'accounts',
-    avatar: 'A'
-  },
-  {
-    id: 'usr_stu_1',
-    name: 'Arjun Sharma',
-    email: 'student1@college.edu',
-    password: 'student123',
-    role: 'student',
-    studentId: 'STU001',
-    rollNo: '22041A0589',
-    collegeId: 'STU/2024/772',
-    department: 'Computer Science & Engineering',
-    degree: 'B.Tech (Honours)',
-    semester: 'Semester VIII',
-    batch: '2022-2026',
-    hallTicket: '22041A0589',
-    avatar: 'A'
-  },
-  {
-    id: 'usr_stu_2',
-    name: 'Priya Patel',
-    email: 'student2@college.edu',
-    password: 'student123',
-    role: 'student',
-    studentId: 'STU002',
-    rollNo: '22041A0590',
-    collegeId: 'STU/2024/773',
-    department: 'Electronics & Communication',
-    degree: 'B.Tech',
-    semester: 'Semester VIII',
-    batch: '2022-2026',
-    hallTicket: '22041A0590',
-    avatar: 'P'
+export const USERS = [];
+
+const findUser = async (normalizedEmail) => {
+  if (mongoose.connection.readyState === 1) {
+    return User.findOne({
+      $or: [{ email: normalizedEmail }, { studentId: normalizedEmail.toUpperCase() }]
+    }).lean();
   }
-];
+
+  return USERS.find((candidate) => (
+    candidate.email.toLowerCase() === normalizedEmail ||
+    candidate.studentId?.toLowerCase() === normalizedEmail
+  ));
+};
+
+const findUserById = async (id) => {
+  if (mongoose.connection.readyState === 1) {
+    return User.findOne({ id }).lean();
+  }
+
+  return USERS.find((candidate) => candidate.id === id);
+};
 
 export const login = async (req, res) => {
   try {
@@ -94,7 +39,7 @@ export const login = async (req, res) => {
     }
 
     const normalizedEmail = email.trim().toLowerCase();
-    const user = USERS.find(u => u.email.toLowerCase() === normalizedEmail || (u.studentId && u.studentId.toLowerCase() === normalizedEmail));
+    const user = await findUser(normalizedEmail);
 
     if (!user || user.password !== password) {
       return res.status(401).json({
@@ -170,7 +115,7 @@ export const signup = async (req, res) => {
 
     const normalizedEmail = email.trim().toLowerCase();
     const normalizedStudentId = studentId?.trim().toUpperCase();
-    const existingUser = USERS.find(
+    const existingUser = await findUser(normalizedEmail) || USERS.find(
       user => user.email.toLowerCase() === normalizedEmail || (normalizedStudentId && user.studentId?.toLowerCase() === normalizedStudentId.toLowerCase())
     );
 
@@ -192,7 +137,11 @@ export const signup = async (req, res) => {
       avatar: name.trim().charAt(0).toUpperCase()
     };
 
-    USERS.push(user);
+    if (mongoose.connection.readyState === 1) {
+      await User.create(user);
+    } else {
+      USERS.push(user);
+    }
 
     const token = jwt.sign(
       {
@@ -234,7 +183,7 @@ export const getMe = async (req, res) => {
     const token = authHeader.split(' ')[1];
     const decoded = jwt.verify(token, JWT_SECRET);
 
-    const user = USERS.find(u => u.id === decoded.id);
+    const user = await findUserById(decoded.id);
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
