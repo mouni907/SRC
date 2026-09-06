@@ -1,5 +1,6 @@
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
+import QRCode from 'qrcode';
 
 /**
  * Generates and downloads an authentic No-Dues Clearance Certificate PDF.
@@ -81,7 +82,7 @@ export async function downloadCertificatePDF(elementId, studentData, certificate
     pdf.setFontSize(10);
     pdf.setFont('helvetica', 'normal');
     pdf.setTextColor(100, 116, 139);
-    pdf.text('Office of Academic Governance & Student Affairs • Digital Clearance Registry', pageWidth / 2, 34, { align: 'center' });
+    pdf.text('Office of Academic Governance & Student Affairs', pageWidth / 2, 34, { align: 'center' });
 
     // Certificate Title Badge
     pdf.setFillColor(241, 245, 249);
@@ -110,41 +111,13 @@ export async function downloadCertificatePDF(elementId, studentData, certificate
     const splitText = pdf.splitTextToSize(bodyText, pageWidth - 40);
     pdf.text(splitText, 20, 62);
 
-    // Department Approval Boxes
-    const depts = Object.entries(certificateMeta.departments || {}).map(([key, department]) => ({
-      name: department.name || key,
-      status: department.status || 'PENDING',
-      reviewer: department.verifiedBy || 'Not assigned'
-    }));
-
-    const startX = 20;
-    const boxWidth = depts.length ? (pageWidth - 40 - ((depts.length - 1) * 6)) / depts.length : pageWidth - 40;
-    const boxY = 88;
-    const boxHeight = 28;
-
-    depts.forEach((d, idx) => {
-      const bx = startX + (idx * (boxWidth + 6));
-      pdf.setFillColor(240, 253, 244); // light green
-      pdf.setDrawColor(187, 247, 208);
-      pdf.roundedRect(bx, boxY, boxWidth, boxHeight, 2, 2, 'FD');
-
-      pdf.setFont('helvetica', 'bold');
-      pdf.setFontSize(9);
-      pdf.setTextColor(22, 101, 52);
-      pdf.text(d.name, bx + (boxWidth / 2), boxY + 7, { align: 'center' });
-
-      pdf.setFontSize(8);
-      pdf.setTextColor(21, 128, 61);
-      pdf.text(d.status, bx + (boxWidth / 2), boxY + 14, { align: 'center' });
-
-      pdf.setFont('helvetica', 'normal');
-      pdf.setFontSize(7);
-      pdf.setTextColor(100, 116, 139);
-      pdf.text(d.reviewer, bx + (boxWidth / 2), boxY + 22, { align: 'center' });
-    });
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(10);
+    pdf.setTextColor(22, 101, 52);
+    pdf.text('STATUS: ALL REQUIRED NO-DUES VERIFICATIONS APPROVED', pageWidth / 2, 94, { align: 'center' });
 
     // Verification & Signatures section
-    const footerY = 135;
+    const footerY = 112;
     pdf.setFont('helvetica', 'bold');
     pdf.setFontSize(9);
     pdf.setTextColor(30, 41, 59);
@@ -154,20 +127,30 @@ export async function downloadCertificatePDF(elementId, studentData, certificate
     pdf.setFontSize(8);
     pdf.setTextColor(100, 116, 139);
     pdf.text(`Issue Date: ${certificateMeta.issueDate || new Date().toLocaleDateString()}`, 20, footerY + 6);
+<<<<<<< HEAD
     pdf.text('Tamper-Evident SHA-256 Digitally Sealed Document', 20, footerY + 12);
     pdf.text(`Verification Code: ${verificationCode}`, 20, footerY + 18);
     pdf.text(`Online Verification: ${verificationUrl}`, 20, footerY + 24);
+=======
+    pdf.text('Digitally verified through the DigiClear registry', 20, footerY + 12);
+    pdf.text('Scan the QR code to verify this certificate', 20, footerY + 18);
+
+    if (certificateMeta.verificationUrl) {
+      const qrDataUrl = await QRCode.toDataURL(certificateMeta.verificationUrl, { width: 180, margin: 1 });
+      pdf.addImage(qrDataUrl, 'PNG', pageWidth - 50, footerY - 2, 30, 30);
+    }
+>>>>>>> 0d27172 (final touch)
 
     // Signature line
     pdf.setFont('helvetica', 'bold');
     pdf.setFontSize(10);
     pdf.setTextColor(15, 23, 42);
-    pdf.text('Prof. K. V. Narayana', pageWidth - 20, footerY + 6, { align: 'right' });
+    pdf.text('Authorized Academic Office', 210, footerY + 6, { align: 'center' });
     pdf.setFont('helvetica', 'normal');
     pdf.setFontSize(8);
     pdf.setTextColor(100, 116, 139);
-    pdf.text('Controller of Examinations', pageWidth - 20, footerY + 12, { align: 'right' });
-    pdf.text('Rajiv Gandhi University of Knowledge Technologies', pageWidth - 20, footerY + 18, { align: 'right' });
+    pdf.text('No-Dues Verification Authority', 210, footerY + 12, { align: 'center' });
+    pdf.text('RGUKT RK Valley', 210, footerY + 18, { align: 'center' });
 
     pdf.save(fileName);
     return { success: true, method: 'vector-pdf' };

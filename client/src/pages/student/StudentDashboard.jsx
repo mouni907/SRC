@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useClearance } from '../../context/ClearanceContext';
 import { downloadCertificatePDF } from '../../utils/pdfGenerator';
+import { buildCertificateVerificationUrl } from '../../utils/certificateVerification';
 import StatusBadge from '../../components/StatusBadge';
 import {
   Lock,
@@ -36,6 +37,8 @@ export default function StudentDashboard() {
     try {
       await downloadCertificatePDF(null, student, {
         id: clearanceRequest?.certificate?.id,
+        issueDate: clearanceRequest?.certificate?.issuedAt ? new Date(clearanceRequest.certificate.issuedAt).toLocaleDateString() : null,
+        verificationUrl: buildCertificateVerificationUrl(clearanceRequest?.certificate && { ...clearanceRequest.certificate, requestId: clearanceRequest.id }, student),
         departments: clearanceRequest?.departments
       });
     } catch (e) {

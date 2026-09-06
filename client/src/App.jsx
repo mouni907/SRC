@@ -22,11 +22,15 @@ import DepartmentReports from './pages/department/DepartmentReports';
 import DepartmentNotifications from './pages/department/DepartmentNotifications';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import VerifyCertificate from './pages/VerifyCertificate';
+<<<<<<< HEAD
 import AdminRequests from './pages/admin/Requests';
 import AdminUsers from './pages/admin/Users';
 import AdminStatistics from './pages/admin/Statistics';
 import AdminAuditLogs from './pages/admin/AuditLogs';
 import AdminNotifications from './pages/admin/AdminNotifications';
+=======
+import CertificateScanner from './pages/CertificateScanner';
+>>>>>>> 0d27172 (final touch)
 
 function StudentPortalLayout() {
   const location = useLocation();
@@ -143,6 +147,7 @@ export default function App() {
 
           {/* Public Verification Route */}
           <Route path="/verify/:id" element={<VerifyCertificate />} />
+          <Route path="/scan" element={<CertificateScanner />} />
 
           {/* Protected Student Portal */}
           <Route 

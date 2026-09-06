@@ -1,195 +1,53 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Award, Bell, Check, CheckCircle2, FileText, XCircle } from 'lucide-react';
 import { useClearance } from '../../context/ClearanceContext';
-import { 
-  Bell, 
-  CheckCircle2, 
-  AlertCircle, 
-  Info, 
-  Award, 
-  Check, 
-  ArrowRight,
-  Filter
-} from 'lucide-react';
+
+const filters = [['all', 'All'], ['unread', 'Unread'], ['status', 'Status changes'], ['certificate', 'Certificates']];
 
 export default function Notifications() {
   const navigate = useNavigate();
-  const { 
-    notifications, 
-    markNotificationAsRead, 
-    markAllNotificationsAsRead 
-  } = useClearance();
-
+  const { notifications, unreadCount, markNotificationAsRead, markAllNotificationsAsRead } = useClearance();
   const [activeFilter, setActiveFilter] = useState('all');
 
-  const filteredNotifications = notifications.filter(n => {
-    if (activeFilter === 'all') return true;
-    if (activeFilter === 'unread') return !n.read;
-    if (activeFilter === 'approvals') return n.type === 'approval' || n.type === 'certificate';
-    if (activeFilter === 'action') return n.type === 'warning';
+  const filteredNotifications = notifications.filter((notification) => {
+    if (activeFilter === 'unread') return !notification.read;
+    if (activeFilter === 'status') return notification.type.startsWith('department_') || notification.type === 'clearance_completed';
+    if (activeFilter === 'certificate') return notification.type === 'certificate_ready';
     return true;
   });
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const openNotification = (notification) => {
+    markNotificationAsRead(notification.id);
+    navigate(notification.type === 'certificate_ready' ? '/student/certificate' : '/student/clearance');
+  };
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-xl border border-slate-200 shadow-xs">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded border border-blue-100">
-              Activity Stream
-            </span>
-            {unreadCount > 0 && (
-              <span className="text-xs font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded-full border border-red-200">
-                {unreadCount} Unread
-              </span>
-            )}
-          </div>
-          <h2 className="text-xl font-bold text-slate-900 mt-1">Clearance Notifications</h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Real-time updates, department sign-offs, and pending action alerts
-          </p>
-        </div>
+      <section className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-start gap-3"><div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600"><Bell className="h-5 w-5" /></div><div><p className="text-[10px] font-bold uppercase tracking-[0.14em] text-blue-600">Activity center</p><h2 className="mt-1 text-xl font-bold text-slate-900">Notifications</h2><p className="mt-1 text-xs text-slate-500">Stay updated with your No-Dues clearance activity.</p></div></div>
+        {unreadCount > 0 && <button type="button" onClick={markAllNotificationsAsRead} className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-slate-100 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-200"><Check className="h-3.5 w-3.5" /> Mark all as read</button>}
+      </section>
 
-        {unreadCount > 0 && (
-          <button
-            onClick={markAllNotificationsAsRead}
-            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-xs"
-          >
-            <Check className="w-3.5 h-3.5" />
-            <span>Mark All as Read</span>
-          </button>
-        )}
-      </div>
+      <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 pb-2">{filters.map(([value, label]) => <button key={value} type="button" onClick={() => setActiveFilter(value)} className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${activeFilter === value ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100'}`}>{label}{value === 'unread' ? ` (${unreadCount})` : ''}</button>)}</div>
 
-      {/* Filter Tabs */}
-      <div className="flex items-center gap-2 border-b border-slate-200 pb-2 text-xs font-medium">
-        <button
-          onClick={() => setActiveFilter('all')}
-          className={`px-3 py-1.5 rounded-lg transition-colors ${
-            activeFilter === 'all' 
-              ? 'bg-blue-600 text-white font-semibold' 
-              : 'text-slate-600 hover:bg-slate-100'
-          }`}
-        >
-          All ({notifications.length})
-        </button>
-
-        <button
-          onClick={() => setActiveFilter('unread')}
-          className={`px-3 py-1.5 rounded-lg transition-colors ${
-            activeFilter === 'unread' 
-              ? 'bg-blue-600 text-white font-semibold' 
-              : 'text-slate-600 hover:bg-slate-100'
-          }`}
-        >
-          Unread ({unreadCount})
-        </button>
-
-        <button
-          onClick={() => setActiveFilter('approvals')}
-          className={`px-3 py-1.5 rounded-lg transition-colors ${
-            activeFilter === 'approvals' 
-              ? 'bg-blue-600 text-white font-semibold' 
-              : 'text-slate-600 hover:bg-slate-100'
-          }`}
-        >
-          Approvals
-        </button>
-
-        <button
-          onClick={() => setActiveFilter('action')}
-          className={`px-3 py-1.5 rounded-lg transition-colors ${
-            activeFilter === 'action' 
-              ? 'bg-blue-600 text-white font-semibold' 
-              : 'text-slate-600 hover:bg-slate-100'
-          }`}
-        >
-          Action Required
-        </button>
-      </div>
-
-      {/* Notifications List */}
-      <div className="bg-white rounded-xl shadow-xs border border-slate-200 divide-y divide-slate-100 overflow-hidden">
-        {filteredNotifications.length === 0 ? (
-          <div className="p-12 text-center text-slate-400 text-xs">
-            <Bell className="w-8 h-8 mx-auto mb-2 opacity-40" />
-            <p>No notifications matching this filter.</p>
-          </div>
-        ) : (
-          filteredNotifications.map((notif) => {
-            const isUnread = !notif.read;
-            const isWarning = notif.type === 'warning';
-            const isApproval = notif.type === 'approval' || notif.type === 'certificate';
-
-            return (
-              <div
-                key={notif.id}
-                className={`p-4 sm:p-5 flex gap-4 transition-colors ${
-                  isUnread ? 'bg-blue-50/20 hover:bg-blue-50/40' : 'hover:bg-slate-50/80'
-                }`}
-              >
-                <div className={`w-10 h-10 rounded-full shrink-0 flex items-center justify-center font-bold text-sm border shadow-2xs ${
-                  isWarning ? 'bg-red-50 text-red-600 border-red-200' :
-                  isApproval ? 'bg-emerald-50 text-emerald-600 border-emerald-200' :
-                  'bg-blue-50 text-blue-600 border-blue-200'
-                }`}>
-                  {isWarning ? '!' : isApproval ? '✓' : 'i'}
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-                    <div className="flex items-center gap-2">
-                      <h4 className="text-sm font-bold text-slate-900">{notif.title}</h4>
-                      {isUnread && (
-                        <span className="tooltip-trigger w-2 h-2 rounded-full bg-blue-600 inline-block" data-tooltip="Unread" data-tooltip-tone="blue" />
-                      )}
-                    </div>
-                    <span className="text-[11px] text-slate-400 font-medium">{notif.timestamp}</span>
-                  </div>
-
-                  <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                    {notif.message}
-                  </p>
-
-                  <div className="mt-3 flex items-center gap-3">
-                    {notif.department === 'accounts' && (
-                      <button
-                        onClick={() => navigate('/student/clearance')}
-                        className="text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1"
-                      >
-                        <span>Settle Accounts Dues</span>
-                        <ArrowRight className="w-3 h-3" />
-                      </button>
-                    )}
-
-                    {notif.type === 'certificate' && (
-                      <button
-                        onClick={() => navigate('/student/certificate')}
-                        className="text-xs font-semibold text-emerald-600 hover:text-emerald-700 flex items-center gap-1"
-                      >
-                        <span>Open Certificate</span>
-                        <ArrowRight className="w-3 h-3" />
-                      </button>
-                    )}
-
-                    {isUnread && (
-                      <button
-                        onClick={() => markNotificationAsRead(notif.id)}
-                        className="text-[11px] text-slate-400 hover:text-slate-600 underline"
-                      >
-                        Mark as read
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            );
-          })
-        )}
-      </div>
+      <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        {filteredNotifications.length === 0 ? <div className="p-14 text-center text-slate-500"><Bell className="mx-auto mb-3 h-8 w-8 text-slate-300" /><p className="text-sm font-semibold text-slate-700">You&apos;re all caught up</p><p className="mt-1 text-xs">No new clearance updates at the moment.</p></div> : filteredNotifications.map((notification) => <NotificationRow key={notification.id} notification={notification} onOpen={() => openNotification(notification)} onRead={() => markNotificationAsRead(notification.id)} />)}
+      </section>
     </div>
   );
+}
+
+function NotificationRow({ notification, onOpen, onRead }) {
+  const icon = notification.type === 'department_approved' ? <CheckCircle2 className="h-4 w-4 text-emerald-600" /> : notification.type === 'department_rejected' ? <XCircle className="h-4 w-4 text-rose-600" /> : notification.type === 'certificate_ready' ? <Award className="h-4 w-4 text-amber-600" /> : <FileText className="h-4 w-4 text-blue-600" />;
+  return <div className={`flex gap-3 border-b border-slate-100 p-4 sm:p-5 ${notification.read ? '' : 'bg-blue-50/35'}`}><div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-50">{icon}</div><button type="button" onClick={onOpen} className="min-w-0 flex-1 text-left"><div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between"><p className={`text-sm ${notification.read ? 'font-medium text-slate-700' : 'font-bold text-slate-900'}`}>{notification.title}</p><span className="text-[10px] text-slate-400">{formatRelativeTime(notification.createdAt)}</span></div><p className="mt-1 text-xs leading-relaxed text-slate-600">{notification.message}</p>{notification.department && <p className="mt-2 text-[10px] font-semibold uppercase tracking-wide text-slate-400">{notification.department}</p>}</button>{!notification.read && <button type="button" onClick={onRead} className="self-center text-[10px] font-semibold text-slate-400 hover:text-blue-600">Read</button>}</div>;
+}
+
+function formatRelativeTime(value) {
+  if (!value) return 'Just now';
+  const seconds = Math.max(0, Math.floor((Date.now() - new Date(value).getTime()) / 1000));
+  if (seconds < 60) return 'Just now';
+  if (seconds < 3600) return `${Math.floor(seconds / 60)} min ago`;
+  if (seconds < 86400) return `${Math.floor(seconds / 3600)} hr ago`;
+  return `${Math.floor(seconds / 86400)} day ago`;
 }

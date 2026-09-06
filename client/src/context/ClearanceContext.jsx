@@ -1,8 +1,30 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useAuth } from './AuthContext';
 import { getCurrentCertificateApi, updateDepartmentStatusApi } from '../services/api';
 
 const ClearanceContext = createContext(null);
+const CLEARANCE_STORAGE_KEY = 'digiclear_clearance_request';
+const NOTIFICATIONS_STORAGE_KEY = 'digiclear_notifications';
+
+const departmentLabels = {
+  library: 'Library',
+  hostel: 'Hostel',
+  sports: 'Sports',
+  accounts: 'Accounts'
+};
+
+const createNotificationKey = ({ type, relatedRequestId, department }) => (
+  [type, relatedRequestId || '', department || ''].join(':')
+);
+
+const readStoredValue = (key, fallback) => {
+  try {
+    const stored = localStorage.getItem(key);
+    return stored ? JSON.parse(stored) : fallback;
+  } catch {
+    return fallback;
+  }
+};
 
 export const ClearanceProvider = ({ children }) => {
   const { user, updateUser } = useAuth();
@@ -99,23 +121,64 @@ export const ClearanceProvider = ({ children }) => {
     return true;
   };
 
-  const [clearanceRequest, setClearanceRequest] = useState({
+  const [clearanceRequest, setClearanceRequest] = useState(() => readStoredValue(CLEARANCE_STORAGE_KEY, {
     id: null,
     appliedAt: null,
     reason: '',
     overallStatus: 'not_started',
     departments: {}
-  });
+  }));
 
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState(() => readStoredValue(NOTIFICATIONS_STORAGE_KEY, []));
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(CLEARANCE_STORAGE_KEY, JSON.stringify(clearanceRequest));
+      localStorage.setItem(NOTIFICATIONS_STORAGE_KEY, JSON.stringify(notifications));
+    } catch (error) {
+      console.warn('[DigiClear] Could not persist local workflow state', error);
+    }
+  }, [clearanceRequest, notifications]);
+
+  useEffect(() => {
+    const handleStorage = (event) => {
+      if (event.key === CLEARANCE_STORAGE_KEY && event.newValue) {
+        setClearanceRequest(JSON.parse(event.newValue));
+      }
+      if (event.key === NOTIFICATIONS_STORAGE_KEY && event.newValue) {
+        setNotifications(JSON.parse(event.newValue));
+      }
+    };
+
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, []);
+
+  const createNotification = (notification) => {
+    setNotifications((previous) => {
+      const key = createNotificationKey(notification);
+      if (previous.some((item) => item.eventKey === key)) return previous;
+      const createdAt = new Date().toISOString();
+      return [{
+        ...notification,
+        studentId: notification.studentId || student.studentId || null,
+        id: `${createdAt}-${key}`,
+        eventKey: key,
+        createdAt,
+        timestamp: 'Just now',
+        read: false
+      }, ...previous];
+    });
+  };
 
   const deptList = Object.values(clearanceRequest.departments);
   const approvedCount = deptList.filter(d => d.status === 'approved').length;
   const pendingCount = deptList.filter(d => d.status === 'pending').length;
   const rejectedCount = deptList.filter(d => d.status === 'rejected').length;
   const completionPercentage = deptList.length ? Math.round((approvedCount / deptList.length) * 100) : 0;
-  const isCompleted = approvedCount === deptList.length;
+  const isCompleted = deptList.length === 4 && approvedCount === 4;
 
+<<<<<<< HEAD
   const updateDepartmentStatus = async (deptKey, newStatus, remarks = '') => {
     let backendResult = null;
     try {
@@ -127,19 +190,32 @@ export const ClearanceProvider = ({ children }) => {
     setClearanceRequest(prev => {
       const updatedDepts = {
         ...prev.departments,
+=======
+  const updateDepartmentStatus = (deptKey, newStatus, remarks = '') => {
+    const previousRequest = clearanceRequest;
+    const previousDepartment = previousRequest.departments[deptKey];
+    if (!previousDepartment || previousDepartment.status === newStatus) return;
+
+    const updatedDepts = {
+        ...previousRequest.departments,
+>>>>>>> 0d27172 (final touch)
         [deptKey]: {
-          ...prev.departments[deptKey],
+          ...previousDepartment,
           status: newStatus,
           verifiedAt: newStatus === 'approved' ? new Date().toLocaleString() : null,
           verifiedBy: newStatus === 'approved' ? 'Designated Department Officer' : null,
-          remarks: remarks || prev.departments[deptKey].remarks
+          remarks: remarks || previousDepartment.remarks
         }
-      };
+    };
 
-      const values = Object.values(updatedDepts);
-      const anyRejected = values.some(d => d.status === 'rejected');
-      const allApproved = values.every(d => d.status === 'approved');
+    const values = Object.values(updatedDepts);
+    const anyRejected = values.some(d => d.status === 'rejected');
+    const allApproved = values.length === 4 && values.every(d => d.status === 'approved');
+    const newOverall = anyRejected ? 'rejected' : allApproved ? 'approved' : 'pending';
+    const requestId = previousRequest.id;
+    const label = departmentLabels[deptKey] || deptKey;
 
+<<<<<<< HEAD
       let newOverall = 'pending';
       if (anyRejected) newOverall = 'rejected';
       else if (allApproved) newOverall = 'approved';
@@ -153,6 +229,43 @@ export const ClearanceProvider = ({ children }) => {
     });
 
     return backendResult;
+=======
+    setClearanceRequest({
+      ...previousRequest,
+      overallStatus: newOverall,
+      departments: updatedDepts,
+      certificate: allApproved ? {
+        id: previousRequest.certificate?.id || `NDC-${Date.now()}`,
+        issuedAt: previousRequest.certificate?.issuedAt || new Date().toISOString(),
+        status: 'issued'
+      } : previousRequest.certificate
+    });
+
+    createNotification({
+      title: `${label} Clearance ${newStatus === 'approved' ? 'Approved' : 'Rejected'}`,
+      message: newStatus === 'approved'
+        ? `Your ${label} clearance has been approved.`
+        : `Your ${label} clearance requires attention.${remarks ? ` Reason: ${remarks}` : ''}`,
+      type: newStatus === 'approved' ? 'department_approved' : 'department_rejected',
+      relatedRequestId: requestId,
+      department: deptKey
+    });
+
+    if (allApproved && previousRequest.overallStatus !== 'approved') {
+      createNotification({
+        title: 'No-Dues Clearance Completed',
+        message: 'All departments have approved your No-Dues request. Your certificate is ready.',
+        type: 'clearance_completed',
+        relatedRequestId: requestId
+      });
+      createNotification({
+        title: 'No-Dues Certificate Ready',
+        message: 'Your digitally verified No-Dues Certificate is now available for download.',
+        type: 'certificate_ready',
+        relatedRequestId: requestId
+      });
+    }
+>>>>>>> 0d27172 (final touch)
   };
 
   const approveAllDepartments = () => {
@@ -174,18 +287,20 @@ export const ClearanceProvider = ({ children }) => {
       };
     });
 
-    setNotifications(prev => [
-      {
-        id: Date.now(),
-        title: 'Clearance Fully Approved!',
-        department: 'system',
-        message: 'Congratulations! All four departments have approved your clearance. Your No-Dues Certificate is now ready.',
-        timestamp: 'Just now',
-        type: 'certificate',
-        read: false
-      },
-      ...prev
-    ]);
+    if (clearanceRequest.id) {
+      createNotification({
+        title: 'No-Dues Clearance Completed',
+        message: 'All departments have approved your No-Dues request. Your certificate is ready.',
+        type: 'clearance_completed',
+        relatedRequestId: clearanceRequest.id
+      });
+      createNotification({
+        title: 'No-Dues Certificate Ready',
+        message: 'Your digitally verified No-Dues Certificate is now available for download.',
+        type: 'certificate_ready',
+        relatedRequestId: clearanceRequest.id
+      });
+    }
   };
 
   const submitClearanceRequest = (reason) => {
@@ -231,21 +346,16 @@ export const ClearanceProvider = ({ children }) => {
       appliedAt: submittedAt,
       reason,
       overallStatus: 'pending',
-      departments
+      departments,
+      certificate: null
     });
 
-    setNotifications((prev) => [
-      {
-        id: Date.now(),
-        title: 'Clearance Application Submitted',
-        department: 'system',
-        message: `Your clearance request ${requestId} has been routed to all four departments.`,
-        timestamp: 'Just now',
-        type: 'system',
-        read: false
-      },
-      ...prev
-    ]);
+    createNotification({
+      title: 'No-Dues Request Submitted',
+      message: 'Your No-Dues clearance request has been submitted successfully.',
+      type: 'clearance_submitted',
+      relatedRequestId: requestId
+    });
   };
 
   const markNotificationAsRead = (id) => {
@@ -256,12 +366,19 @@ export const ClearanceProvider = ({ children }) => {
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
   };
 
+  const unreadCount = notifications.filter((notification) => !notification.read).length;
+  const visibleNotifications = user?.role === 'student'
+    ? notifications.filter((notification) => !notification.studentId || notification.studentId === student.studentId)
+    : notifications;
+  const visibleUnreadCount = visibleNotifications.filter((notification) => !notification.read).length;
+
   return (
     <ClearanceContext.Provider value={{
       student,
       updateStudentProfile,
       clearanceRequest,
-      notifications,
+      notifications: visibleNotifications,
+      unreadCount: visibleUnreadCount,
       approvedCount,
       pendingCount,
       rejectedCount,
@@ -270,6 +387,7 @@ export const ClearanceProvider = ({ children }) => {
       updateDepartmentStatus,
       approveAllDepartments,
       submitClearanceRequest,
+      createNotification,
       markNotificationAsRead,
       markAllNotificationsAsRead
     }}>

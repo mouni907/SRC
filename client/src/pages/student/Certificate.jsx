@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useClearance } from '../../context/ClearanceContext';
 import { downloadCertificatePDF } from '../../utils/pdfGenerator';
+import { buildCertificateVerificationUrl } from '../../utils/certificateVerification';
 import QRCode from 'qrcode';
 import { Award, CheckCircle2, Download, Eye, FileText, Lock } from 'lucide-react';
 
