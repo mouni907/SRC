@@ -1,7 +1,14 @@
-// server/seed/seed.js
-// Demo Seed Data prepared for Phase 3/Phase 4
+import User from '../models/User.js';
+import { USERS } from '../controllers/authController.js';
+
 export const seedDemoUsers = async () => {
-  console.log('[Seed] Ready for Phase 3/4 seed population');
+  await Promise.all(USERS.map((user) => User.updateOne(
+    { id: user.id },
+    { $set: user },
+    { upsert: true }
+  )));
+
+  console.log(`[Seed] ${USERS.length} demo users available in MongoDB`);
 };
 
 export default seedDemoUsers;

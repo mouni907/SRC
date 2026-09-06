@@ -188,7 +188,7 @@ export const ClearanceProvider = ({ children }) => {
 
       let newOverall = 'pending';
       if (anyRejected) newOverall = 'rejected';
-      else if (allApproved) newOverall = 'completed';
+      else if (allApproved) newOverall = 'approved';
 
       return {
         ...prev,
@@ -212,7 +212,7 @@ export const ClearanceProvider = ({ children }) => {
       });
       return {
         ...prev,
-        overallStatus: 'completed',
+        overallStatus: 'approved',
         departments: updatedDepts
       };
     });
@@ -222,7 +222,7 @@ export const ClearanceProvider = ({ children }) => {
         id: Date.now(),
         title: 'Clearance Fully Approved!',
         department: 'system',
-        message: 'Congratulations! All four departments have approved your clearance. Your No-Dues Certificate is now unlocked.',
+        message: 'Congratulations! All four departments have approved your clearance. Your No-Dues Certificate is now ready.',
         timestamp: 'Just now',
         type: 'certificate',
         read: false

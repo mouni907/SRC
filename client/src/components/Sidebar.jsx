@@ -1,13 +1,12 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { 
-  LayoutDashboard, 
-  FileText, 
-  Award, 
-  Bell, 
+import {
+  LayoutDashboard,
+  FileText,
+  Award,
+  Bell,
   LogOut,
-  Building2,
   User
 } from 'lucide-react';
 
@@ -15,6 +14,10 @@ export default function Sidebar({ activeTab, onTabChange }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+
+  if (user?.role !== 'student') {
+    return null;
+  }
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', path: '/student/dashboard', icon: LayoutDashboard },
@@ -38,12 +41,9 @@ export default function Sidebar({ activeTab, onTabChange }) {
 
   return (
     <aside id="sleek-sidebar" className="w-64 bg-slate-900 text-white flex flex-col shrink-0 h-screen sticky top-0 border-r border-slate-800 select-none z-30">
-      {/* Brand Header */}
       <div className="p-6 border-b border-slate-800 cursor-pointer" onClick={() => navigate('/student/dashboard')}>
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center font-bold text-lg text-white shadow-sm">
-            D
-          </div>
+          <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center font-bold text-lg text-white shadow-sm">D</div>
           <div>
             <h1 className="text-xl font-bold tracking-tight text-white leading-none">DigiClear</h1>
             <p className="text-[11px] text-slate-400 mt-1 font-medium">Digital Clearance System</p>
@@ -51,11 +51,8 @@ export default function Sidebar({ activeTab, onTabChange }) {
         </div>
       </div>
 
-      {/* Main Navigation */}
       <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto">
-        <div className="px-3 py-1.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-          Student Portal
-        </div>
+        <div className="px-3 py-1.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Student Portal</div>
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname.startsWith(item.path) || activeTab === item.id;
@@ -74,31 +71,11 @@ export default function Sidebar({ activeTab, onTabChange }) {
             </button>
           );
         })}
-
-        <div className="pt-6 px-3 py-1.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-          Clearance Desks
-        </div>
-        <div className="space-y-1">
-          {['Library', 'Hostel', 'Sports', 'Accounts'].map((dept) => (
-            <button
-              key={dept}
-              onClick={() => navigate('/student/clearance')}
-              className="w-full flex items-center justify-between px-3.5 py-2 text-xs text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 rounded-md transition-colors cursor-pointer text-left"
-            >
-              <span className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-slate-600" />
-                {dept}
-              </span>
-              <span className="text-[10px] text-slate-500 uppercase">Status</span>
-            </button>
-          ))}
-        </div>
       </nav>
 
-      {/* User Footer Profile & Sign out */}
       <div className="p-4 border-t border-slate-800 bg-slate-900/60">
         <div className="flex items-center justify-between">
-          <div 
+          <div
             onClick={() => navigate('/student/profile')}
             className="flex items-center gap-3 min-w-0 cursor-pointer hover:opacity-90 group transition-opacity"
             title="View & Edit Student Profile"

@@ -1,9 +1,10 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export default function ProtectedRoute({ children, allowedRoles }) {
   const { user, isAuthenticated, loadingAuth } = useAuth();
+  const location = useLocation();
 
   if (loadingAuth) {
     return (
@@ -22,6 +23,14 @@ export default function ProtectedRoute({ children, allowedRoles }) {
     if (user.role === 'department') return <Navigate to="/department/dashboard" replace />;
     if (user.role === 'admin') return <Navigate to="/admin/dashboard" replace />;
     return <Navigate to="/login" replace />;
+  }
+
+  if (user.role === 'student' && (location.pathname.startsWith('/department') || location.pathname.startsWith('/admin'))) {
+    return <Navigate to="/student/dashboard" replace />;
+  }
+
+  if (user.role === 'department' && location.pathname.startsWith('/admin')) {
+    return <Navigate to="/department/dashboard" replace />;
   }
 
   return <>{children}</>;

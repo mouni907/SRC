@@ -3,34 +3,25 @@ import { useNavigate } from 'react-router-dom';
 import { useClearance } from '../../context/ClearanceContext';
 import { downloadCertificatePDF } from '../../utils/pdfGenerator';
 import StatusBadge from '../../components/StatusBadge';
-import { 
-  Lock, 
-  Award, 
+import {
+  Lock,
+  Award,
   Download,
-  Bell, 
-  CheckCircle2, 
-  Clock, 
-  AlertCircle, 
-  ArrowRight, 
-  Sparkles, 
-  RotateCcw,
-  ShieldCheck,
+  Bell,
+  ArrowRight,
   Building2,
-  FileCheck2,
   UserPen
 } from 'lucide-react';
 
 export default function StudentDashboard() {
   const navigate = useNavigate();
-  const { 
-    student, 
-    clearanceRequest, 
-    notifications, 
-    completionPercentage, 
-    approvedCount, 
-    isCompleted,
-    approveAllDepartments,
-    resetToDemoState
+  const {
+    student,
+    clearanceRequest,
+    notifications,
+    completionPercentage,
+    approvedCount,
+    isCompleted
   } = useClearance();
 
   const depts = Object.entries(clearanceRequest.departments).map(([key, data]) => ({
@@ -134,13 +125,6 @@ export default function StudentDashboard() {
               <Building2 className="w-3.5 h-3.5 text-slate-400" />
               Auto-generates certificate when all 4 approve
             </span>
-            <button 
-              onClick={() => navigate('/student/clearance')}
-              className="font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1"
-            >
-              <span>View Department Logs</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
           </div>
         </div>
 

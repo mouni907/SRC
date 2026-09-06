@@ -1,15 +1,15 @@
 import express from 'express';
 import cors from 'cors';
 import authRoutes from './routes/authRoutes.js';
+import departmentRoutes from './routes/departmentRoutes.js';
+import certificateRoutes from './routes/certificateRoutes.js';
 
 const app = express();
 
-// Middlewares
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Health Check API
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     status: 'ok',
@@ -18,7 +18,8 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// API Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/department', departmentRoutes);
+app.use('/api/certificate', certificateRoutes);
 
 export default app;

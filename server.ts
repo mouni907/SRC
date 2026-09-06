@@ -1,11 +1,18 @@
 import express from 'express';
 import path from 'path';
+import dotenv from 'dotenv';
 import { createServer as createViteServer } from 'vite';
 import app from './server/app.js';
+import connectDB from './server/config/db.js';
+import { seedDemoUsers } from './server/seed/seed.js';
 
+dotenv.config();
 const PORT = 3000;
 
 async function startServer() {
+  await connectDB();
+  await seedDemoUsers();
+
   // Vite middleware for development
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
@@ -27,4 +34,7 @@ async function startServer() {
   });
 }
 
-startServer();
+startServer().catch((error) => {
+  console.error(`[DigiClear] Startup failed: ${error.message}`);
+  process.exit(1);
+});
