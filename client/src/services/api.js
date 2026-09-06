@@ -57,4 +57,19 @@ export const checkServerHealth = async () => {
   return response.data;
 };
 
+export const verifyCertificateApi = async (verificationCode) => {
+  const response = await api.get(`/certificate/verify/${encodeURIComponent(verificationCode)}`);
+  return response.data;
+};
+
+export const updateDepartmentStatusApi = async (requestId, status, reason) => {
+  const response = await api.patch(`/department/requests/${requestId}/${status}`, { reason });
+  return response.data;
+};
+
+export const getCurrentCertificateApi = async () => {
+  const response = await api.get('/certificate/current');
+  return response.data;
+};
+
 export default api;

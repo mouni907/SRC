@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
 import { useAuth } from './AuthContext';
+import { getCurrentCertificateApi, updateDepartmentStatusApi } from '../services/api';
 
 const ClearanceContext = createContext(null);
 
@@ -57,6 +58,22 @@ export const ClearanceProvider = ({ children }) => {
     }
   }, [user]);
 
+  React.useEffect(() => {
+    if (!user || user.role !== 'student') return;
+
+    getCurrentCertificateApi()
+      .then((result) => {
+        if (!result?.clearance) return;
+        setClearanceRequest((previous) => ({
+          ...previous,
+          ...result.clearance,
+          departments: { ...previous.departments, ...result.clearance.departments },
+          certificate: result.certificate || previous.certificate || null
+        }));
+      })
+      .catch(() => undefined);
+  }, [user]);
+
   const updateStudentProfile = (newProfile) => {
     const updated = { ...student, ...newProfile };
     setStudent(updated);
@@ -99,7 +116,14 @@ export const ClearanceProvider = ({ children }) => {
   const completionPercentage = deptList.length ? Math.round((approvedCount / deptList.length) * 100) : 0;
   const isCompleted = approvedCount === deptList.length;
 
-  const updateDepartmentStatus = (deptKey, newStatus, remarks = '') => {
+  const updateDepartmentStatus = async (deptKey, newStatus, remarks = '') => {
+    let backendResult = null;
+    try {
+      backendResult = await updateDepartmentStatusApi(clearanceRequest.id, newStatus, remarks);
+    } catch (error) {
+      console.warn('[ClearanceContext] Department API update unavailable; keeping local state.', error.message);
+    }
+
     setClearanceRequest(prev => {
       const updatedDepts = {
         ...prev.departments,
@@ -122,10 +146,13 @@ export const ClearanceProvider = ({ children }) => {
 
       return {
         ...prev,
-        overallStatus: newOverall,
-        departments: updatedDepts
+        overallStatus: backendResult?.overallStatus || newOverall,
+        departments: updatedDepts,
+        certificate: backendResult?.certificate || prev.certificate || null
       };
     });
+
+    return backendResult;
   };
 
   const approveAllDepartments = () => {

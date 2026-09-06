@@ -8,6 +8,8 @@ import html2canvas from 'html2canvas';
  */
 export async function downloadCertificatePDF(elementId, studentData, certificateMeta = {}) {
   const certId = certificateMeta.id || `NDC-${Date.now()}`;
+  const verificationCode = certificateMeta.verificationCode || '';
+  const verificationUrl = `${window.location.origin}/verify/${verificationCode}`;
   const fileName = `DigiClear_No_Dues_Certificate_${certId}.pdf`;
 
   // Attempt 1: High-fidelity DOM capture via html2canvas
@@ -153,7 +155,8 @@ export async function downloadCertificatePDF(elementId, studentData, certificate
     pdf.setTextColor(100, 116, 139);
     pdf.text(`Issue Date: ${certificateMeta.issueDate || new Date().toLocaleDateString()}`, 20, footerY + 6);
     pdf.text('Tamper-Evident SHA-256 Digitally Sealed Document', 20, footerY + 12);
-    pdf.text(`Online Verification: ${window.location.origin}/verify/${certId}`, 20, footerY + 18);
+    pdf.text(`Verification Code: ${verificationCode}`, 20, footerY + 18);
+    pdf.text(`Online Verification: ${verificationUrl}`, 20, footerY + 24);
 
     // Signature line
     pdf.setFont('helvetica', 'bold');

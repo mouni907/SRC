@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Check, FileCheck2, X } from 'lucide-react';
+import { ArrowLeft, Check, X } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useClearance } from '../../context/ClearanceContext';
@@ -15,7 +15,8 @@ export default function RequestDetails() {
   const meta = getDepartmentMeta(department);
   const request = getDepartmentRequest(clearanceRequest, student, department);
   const [remarks, setRemarks] = useState('');
-  const isFinal = request?.status === 'approved' || request?.status === 'rejected';
+  const [decisionClosed, setDecisionClosed] = useState(false);
+  const isFinal = request?.status === 'approved' || request?.status === 'rejected' || decisionClosed;
 
   if (!request || request.id !== requestId) {
     return (
@@ -38,6 +39,7 @@ export default function RequestDetails() {
       remarks || (status === 'approved' ? 'Department requirements approved.' : 'Department requirements remain outstanding.')
     );
     setRemarks('');
+    setDecisionClosed(true);
   };
 
   return (
@@ -53,7 +55,7 @@ export default function RequestDetails() {
             <p className="mt-2 font-mono text-xs text-slate-500">#{request.id}</p>
             <p className="mt-1 text-[11px] text-slate-500">Received: {request.appliedAt}</p>
           </div>
-          <span className="w-fit rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-bold uppercase text-slate-700">{request.status}</span>
+          <span className={`w-fit rounded-full px-2.5 py-1 text-[10px] font-bold uppercase ${request.status === 'approved' ? 'bg-emerald-50 text-emerald-700' : request.status === 'rejected' ? 'bg-red-50 text-red-700' : 'bg-amber-50 text-amber-700'}`}>{request.status}</span>
         </div>
 
         <div className="flex items-center gap-3 border-b border-slate-100 p-5">
@@ -65,27 +67,18 @@ export default function RequestDetails() {
           </div>
         </div>
 
-        <div className="grid gap-6 p-5 lg:grid-cols-2">
-          <div>
-            <h2 className="mb-3 text-xs font-bold uppercase tracking-wide">Submitted documents</h2>
-            <div className="rounded-lg border border-dashed border-slate-300 p-5 text-center text-xs text-slate-500">
-              <FileCheck2 className="mx-auto mb-2 h-5 w-5 text-slate-400" />
-              No documents submitted for this request.
-            </div>
-          </div>
-          <div>
+        {!isFinal && <div className="p-5">
             <h2 className="mb-3 text-xs font-bold uppercase tracking-wide">Department decision</h2>
             <textarea value={remarks} onChange={(event) => setRemarks(event.target.value)} rows={5} placeholder="Add verification notes or outstanding requirements..." className="w-full resize-none rounded-lg border border-slate-200 p-3 text-xs outline-none focus:ring-2 focus:ring-blue-100" />
             <div className="mt-3 flex gap-2">
-              <button type="button" disabled={isFinal} onClick={() => updateStatus('rejected')} className="flex-1 rounded-lg border border-red-200 bg-white px-3 py-2 text-xs font-semibold text-red-600 disabled:cursor-not-allowed disabled:opacity-50">
-                <X className="mr-1 inline h-3.5 w-3.5" /> Flag dues
+              <button type="button" disabled={isFinal} onClick={() => updateStatus('rejected')} className="flex-1 rounded-lg border border-red-300 bg-red-100 px-3 py-2 text-xs font-semibold text-red-700 hover:bg-red-200 disabled:cursor-not-allowed disabled:opacity-50">
+                <X className="mr-1 inline h-3.5 w-3.5" /> Reject
               </button>
               <button type="button" disabled={isFinal} onClick={() => updateStatus('approved')} className="flex-1 rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50">
                 <Check className="mr-1 inline h-3.5 w-3.5" /> Approve
               </button>
             </div>
-          </div>
-        </div>
+          </div>}
       </section>
     </DepartmentPortalLayout>
   );
