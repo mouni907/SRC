@@ -144,7 +144,7 @@ export default function Notifications() {
                     <div className="flex items-center gap-2">
                       <h4 className="text-sm font-bold text-slate-900">{notif.title}</h4>
                       {isUnread && (
-                        <span className="w-2 h-2 rounded-full bg-blue-600 inline-block" title="Unread" />
+                        <span className="tooltip-trigger w-2 h-2 rounded-full bg-blue-600 inline-block" data-tooltip="Unread" data-tooltip-tone="blue" />
                       )}
                     </div>
                     <span className="text-[11px] text-slate-400 font-medium">{notif.timestamp}</span>

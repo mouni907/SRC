@@ -8,10 +8,8 @@ import {
   CheckCircle2, 
   Clock, 
   XCircle, 
-  AlertTriangle, 
   Calendar, 
   UserCheck, 
-  CreditCard,
   Send,
   HelpCircle,
   ArrowLeft,
@@ -39,9 +37,6 @@ export default function ClearanceDetails() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-xl border border-slate-200 shadow-xs">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded border border-blue-100">
-              Clearance Application
-            </span>
             <span className="text-xs text-slate-400 font-mono">#{clearanceRequest.id}</span>
           </div>
           <h2 className="text-xl font-bold text-slate-900 mt-1">No-Dues Department Review Status</h2>
@@ -60,14 +55,6 @@ export default function ClearanceDetails() {
           }`}>
             {clearanceRequest.overallStatus}
           </div>
-        </div>
-      </div>
-
-      {/* Duplicate Request Protection Notice */}
-      <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-start gap-3 text-xs text-slate-600">
-        <AlertTriangle className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
-        <div className="flex-1">
-          <strong className="text-slate-800">Single Active Request Policy:</strong> You currently have an active clearance workflow. Institutional policy prevents filing multiple concurrent requests. Once all four departments approve, your digital certificate will be automatically stamped.
         </div>
       </div>
 
@@ -129,30 +116,15 @@ export default function ClearanceDetails() {
                       </span>
                     </div>
 
-                    <div className="mt-3 p-3 rounded-lg bg-slate-50 border border-slate-200/70 text-slate-700">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
-                        Official Department Notes / Remarks:
-                      </span>
-                      <p className="text-xs leading-relaxed italic">
-                        "{dept.remarks || 'No remarks submitted yet.'}"
-                      </p>
-                    </div>
                   </div>
                 </div>
 
                 {/* Department clearance status message */}
                 <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
-                  {dept.key === 'accounts' && isPending && (
-                    <div className="flex items-center gap-1.5 text-xs text-amber-700 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-lg w-full">
-                      <CreditCard className="w-3.5 h-3.5 shrink-0" />
-                      <span>Pending settlement at Accounts Counter / Bursar Desk ($40.00).</span>
-                    </div>
-                  )}
-
-                  {dept.key === 'hostel' && isPending && (
-                    <div className="flex items-center gap-1.5 text-xs text-slate-600 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg w-full">
-                      <Clock className="w-3.5 h-3.5 shrink-0 text-slate-400" />
-                      <span>Room inventory inspection scheduled. Key handover verification pending.</span>
+                  {isPending && (
+                    <div className="flex items-center gap-1.5 text-xs text-amber-700 w-full">
+                      <Clock className="w-3.5 h-3.5 shrink-0 text-amber-700" />
+                      <span>{dept.remarks || 'Pending department review.'}</span>
                     </div>
                   )}
 

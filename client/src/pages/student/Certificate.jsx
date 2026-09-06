@@ -214,8 +214,9 @@ export default function Certificate() {
               type="button"
               onClick={handleViewCertificate}
               aria-label={certificateVisible ? 'Hide Certificate' : 'View Certificate'}
-              title={certificateVisible ? 'Hide Certificate' : 'View Certificate'}
-              className="h-10 w-10 rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900 transition-colors flex items-center justify-center"
+              data-tooltip={certificateVisible ? 'Hide certificate' : 'View certificate'}
+              data-tooltip-tone="blue"
+              className="tooltip-trigger h-10 w-10 rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900 transition-colors flex items-center justify-center"
             >
               <Eye className="w-4 h-4" />
             </button>

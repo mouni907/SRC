@@ -77,8 +77,9 @@ export default function Sidebar({ activeTab, onTabChange }) {
         <div className="flex items-center justify-between">
           <div
             onClick={() => navigate('/student/profile')}
-            className="flex items-center gap-3 min-w-0 cursor-pointer hover:opacity-90 group transition-opacity"
-            title="View & Edit Student Profile"
+            data-tooltip="View and edit profile"
+            data-tooltip-tone="blue"
+            className="tooltip-trigger sidebar-tooltip flex items-center gap-3 min-w-0 cursor-pointer hover:opacity-90 group transition-opacity"
           >
             <div className="w-9 h-9 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center text-slate-200 font-semibold text-xs shrink-0 group-hover:border-blue-500">
               {user?.name?.charAt(0) || 'S'}
@@ -91,8 +92,10 @@ export default function Sidebar({ activeTab, onTabChange }) {
 
           <button
             onClick={handleSignOut}
-            title="Sign Out"
-            className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-slate-800 rounded-lg transition-colors cursor-pointer shrink-0 ml-2"
+            aria-label="Sign Out"
+            data-tooltip="Sign out"
+            data-tooltip-tone="rose"
+            className="tooltip-trigger sidebar-tooltip p-1.5 text-slate-400 hover:text-red-400 hover:bg-slate-800 rounded-lg transition-colors cursor-pointer shrink-0 ml-2"
           >
             <LogOut className="w-4 h-4" />
           </button>

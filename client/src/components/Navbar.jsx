@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { ChevronRight, LogOut, User } from 'lucide-react';
+import { ChevronRight, LogOut } from 'lucide-react';
 
 export default function Navbar({ 
   title = 'No-Dues Clearance',
@@ -9,6 +9,7 @@ export default function Navbar({
 }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const profileInitial = user?.name?.trim()?.charAt(0).toUpperCase() || 'S';
 
   const handleSignOut = () => {
     logout();
@@ -26,20 +27,22 @@ export default function Navbar({
 
       {/* Right User & Status Section */}
       <div className="flex items-center gap-3 sm:gap-4">
-        <div className="bg-blue-50 text-blue-700 border border-blue-100 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider hidden sm:block">
-          {user?.semester || 'Semester VIII'}
-        </div>
-
-        <div className="flex items-center gap-2 text-xs text-slate-600 bg-slate-50 border border-slate-200 py-1.5 px-3 rounded-lg">
-          <User className="w-3.5 h-3.5 text-blue-600" />
-          <span className="font-medium text-slate-900 hidden sm:inline">{user?.name || 'Student'}</span>
-          <span className="text-[11px] text-slate-400 font-mono">({user?.collegeId || user?.studentId || 'STU001'})</span>
-        </div>
+        <button
+          onClick={() => navigate('/student/profile')}
+          aria-label="View Profile"
+          data-tooltip="View profile"
+          data-tooltip-tone="blue"
+          className="tooltip-trigger w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold hover:bg-blue-700 transition-colors cursor-pointer"
+        >
+          {profileInitial}
+        </button>
 
         <button
           onClick={handleSignOut}
-          title="Sign Out"
-          className="text-xs text-slate-500 hover:text-red-600 hover:bg-red-50 p-2 rounded-lg transition-colors cursor-pointer border border-transparent hover:border-red-200"
+          aria-label="Sign Out"
+          data-tooltip="Sign out"
+          data-tooltip-tone="rose"
+          className="tooltip-trigger text-xs text-slate-500 hover:text-red-600 hover:bg-red-50 p-2 rounded-lg transition-colors cursor-pointer border border-transparent hover:border-red-200"
         >
           <LogOut className="w-4 h-4" />
         </button>

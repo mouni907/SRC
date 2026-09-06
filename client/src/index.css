@@ -9,3 +9,61 @@
     -moz-osx-font-smoothing: grayscale;
   }
 }
+
+@media (hover: hover) and (pointer: fine) {
+  .tooltip-trigger {
+    position: relative;
+  }
+
+  .tooltip-trigger::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: calc(100% + 9px);
+    right: 0;
+    z-index: 50;
+    padding: 6px 9px;
+    border-radius: 7px;
+    color: white;
+    background: rgb(15 23 42 / 0.94);
+    box-shadow: 0 8px 18px rgb(15 23 42 / 0.16);
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateY(-4px);
+    pointer-events: none;
+    transition: opacity 160ms ease, transform 160ms ease;
+  }
+
+  .tooltip-trigger[data-tooltip-tone="blue"]:hover,
+  .tooltip-trigger[data-tooltip-tone="blue"]:focus-visible {
+    box-shadow: 0 0 0 3px rgb(147 197 253 / 0.45);
+  }
+
+  .tooltip-trigger[data-tooltip-tone="rose"]::after {
+    background: rgb(190 24 93 / 0.95);
+  }
+
+  .tooltip-trigger:hover::after,
+  .tooltip-trigger:focus-visible::after {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .sidebar-tooltip::after {
+    top: auto;
+    bottom: calc(100% + 9px);
+    transform: translateY(4px);
+  }
+
+  :where([class~="bg-white"][class~="border"]) {
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+  }
+
+  :where([class~="bg-white"][class~="border"]):hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgb(15 23 42 / 0.08);
+    border-color: rgb(148 163 184 / 0.8);
+  }
+}
