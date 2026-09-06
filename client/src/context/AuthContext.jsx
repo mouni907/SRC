@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { loginApi, getMeApi, logoutApi } from '../services/api';
+import { loginApi, signupApi, getMeApi, logoutApi } from '../services/api';
 
 const AuthContext = createContext(null);
 
@@ -47,6 +47,17 @@ export const AuthProvider = ({ children }) => {
     throw new Error(res.message || 'Authentication failed');
   };
 
+  const signup = async (userDetails) => {
+    const res = await signupApi(userDetails);
+    if (res.success && res.token && res.user) {
+      setToken(res.token);
+      setUser(res.user);
+      localStorage.setItem('digiclear_token', res.token);
+      return res.user;
+    }
+    throw new Error(res.message || 'Unable to create account');
+  };
+
   const logout = async () => {
     try {
       await logoutApi();
@@ -70,7 +81,8 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider value={{ 
       user, 
       token, 
-      login, 
+      login,
+      signup,
       logout, 
       updateUser,
       isAuthenticated: !!user && !!token,

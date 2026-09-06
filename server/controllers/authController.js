@@ -134,6 +134,80 @@ export const login = async (req, res) => {
   }
 };
 
+export const signup = async (req, res) => {
+  try {
+    const { name, email, password, studentId, department } = req.body;
+
+    if (!name || !email || !password || !studentId || !department) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please complete all required registration fields'
+      });
+    }
+
+    if (password.length < 8) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password must be at least 8 characters long'
+      });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+    const normalizedStudentId = studentId.trim().toUpperCase();
+    const existingUser = USERS.find(
+      user => user.email.toLowerCase() === normalizedEmail || user.studentId?.toLowerCase() === normalizedStudentId.toLowerCase()
+    );
+
+    if (existingUser) {
+      return res.status(409).json({
+        success: false,
+        message: 'An account already exists with that email or student ID'
+      });
+    }
+
+    const user = {
+      id: `usr_stu_${Date.now()}`,
+      name: name.trim(),
+      email: normalizedEmail,
+      password,
+      role: 'student',
+      studentId: normalizedStudentId,
+      department: department.trim(),
+      avatar: name.trim().charAt(0).toUpperCase()
+    };
+
+    USERS.push(user);
+
+    const token = jwt.sign(
+      {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        department: user.department,
+        studentId: user.studentId,
+        name: user.name
+      },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    const { password: _, ...safeUser } = user;
+
+    res.status(201).json({
+      success: true,
+      message: 'Account created successfully',
+      token,
+      user: safeUser
+    });
+  } catch (error) {
+    console.error('Signup error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error during registration'
+    });
+  }
+};
+
 export const getMe = async (req, res) => {
   try {
     const authHeader = req.headers.authorization;
@@ -169,4 +243,4 @@ export const logout = async (req, res) => {
   });
 };
 
-export default { login, getMe, logout };
+export default { login, signup, getMe, logout };

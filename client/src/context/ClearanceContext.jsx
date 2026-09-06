@@ -231,6 +231,66 @@ export const ClearanceProvider = ({ children }) => {
     ]);
   };
 
+  const submitClearanceRequest = (reason) => {
+    const submittedAt = new Date().toLocaleString();
+    const requestId = `REQ-${Date.now().toString().slice(-6)}`;
+    const departments = {
+      library: {
+        name: 'Library',
+        letter: 'L',
+        status: 'pending',
+        verifiedBy: null,
+        verifiedAt: null,
+        remarks: 'Awaiting library verification.'
+      },
+      hostel: {
+        name: 'Hostel',
+        letter: 'H',
+        status: 'pending',
+        verifiedBy: null,
+        verifiedAt: null,
+        remarks: 'Awaiting hostel verification.'
+      },
+      sports: {
+        name: 'Sports',
+        letter: 'S',
+        status: 'pending',
+        verifiedBy: null,
+        verifiedAt: null,
+        remarks: 'Awaiting sports verification.'
+      },
+      accounts: {
+        name: 'Accounts',
+        letter: 'A',
+        status: 'pending',
+        verifiedBy: null,
+        verifiedAt: null,
+        remarks: 'Awaiting accounts verification.'
+      }
+    };
+
+    setClearanceRequest({
+      id: requestId,
+      appliedAt: submittedAt,
+      reason,
+      overallStatus: 'pending',
+      departments
+    });
+
+    setNotifications((prev) => [
+      {
+        id: Date.now(),
+        title: 'Clearance Application Submitted',
+        department: 'system',
+        message: `Your clearance request ${requestId} has been routed to all four departments.`,
+        timestamp: 'Just now',
+        type: 'system',
+        read: false
+      },
+      ...prev
+    ]);
+  };
+
   const resetToDemoState = () => {
     setClearanceRequest({
       id: 'REQ-991204',
@@ -295,6 +355,7 @@ export const ClearanceProvider = ({ children }) => {
       isCompleted,
       updateDepartmentStatus,
       approveAllDepartments,
+      submitClearanceRequest,
       resetToDemoState,
       markNotificationAsRead,
       markAllNotificationsAsRead

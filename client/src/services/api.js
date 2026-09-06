@@ -37,6 +37,11 @@ export const loginApi = async (email, password) => {
   return response.data;
 };
 
+export const signupApi = async (userDetails) => {
+  const response = await api.post('/auth/signup', userDetails);
+  return response.data;
+};
+
 export const getMeApi = async () => {
   const response = await api.get('/auth/me');
   return response.data;

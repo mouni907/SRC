@@ -6,6 +6,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import Login from './pages/Login';
+import Signup from './pages/Signup';
 import StudentDashboard from './pages/student/StudentDashboard';
 import ClearanceDetails from './pages/student/ClearanceDetails';
 import Certificate from './pages/student/Certificate';
@@ -115,6 +116,7 @@ export default function App() {
         <Routes>
           {/* Public Authentication Route */}
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
 
           {/* Public Verification Route */}
           <Route path="/verify/:id" element={<VerifyCertificate />} />

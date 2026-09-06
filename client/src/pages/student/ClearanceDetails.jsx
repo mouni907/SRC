@@ -18,12 +18,15 @@ import {
 
 export default function ClearanceDetails() {
   const navigate = useNavigate();
+  const [isApplying, setIsApplying] = useState(false);
+  const [reason, setReason] = useState('Graduation & Degree Award Semester Completion');
+  const [submitted, setSubmitted] = useState(false);
   const { 
     student, 
     clearanceRequest, 
     approvedCount, 
     isCompleted,
-    updateDepartmentStatus 
+    submitClearanceRequest
   } = useClearance();
 
   const depts = Object.entries(clearanceRequest.departments).map(([key, data]) => ({
@@ -33,6 +36,53 @@ export default function ClearanceDetails() {
 
   return (
     <div className="space-y-6">
+      <section className="bg-slate-900 rounded-xl p-5 sm:p-6 text-white flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-blue-300">Start a clearance application</p>
+          <h2 className="text-lg sm:text-xl font-bold mt-1">Apply for No-Dues clearance</h2>
+          <p className="text-xs text-slate-300 mt-1 max-w-xl">Submit your request once and route it to Library, Hostel, Sports, and Accounts for verification.</p>
+        </div>
+        {!isApplying && (
+          <button onClick={() => { setIsApplying(true); setSubmitted(false); }} className="shrink-0 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-500 hover:bg-blue-400 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer">
+            <Send className="w-4 h-4" />
+            Apply for clearance
+          </button>
+        )}
+      </section>
+
+      {isApplying && (
+        <section className="bg-white rounded-xl border border-blue-200 shadow-xs p-5 sm:p-6">
+          <div className="flex items-start justify-between gap-4 mb-5">
+            <div>
+              <h3 className="text-base font-bold text-slate-900">New clearance application</h3>
+              <p className="text-xs text-slate-500 mt-1">Choose the purpose for your request before submitting it.</p>
+            </div>
+            <button type="button" onClick={() => setIsApplying(false)} className="text-xs font-semibold text-slate-500 hover:text-slate-800 cursor-pointer">Cancel</button>
+          </div>
+          <form onSubmit={(event) => { event.preventDefault(); submitClearanceRequest(reason); setIsApplying(false); setSubmitted(true); }} className="flex flex-col sm:flex-row items-stretch sm:items-end gap-4">
+            <label className="flex-1 text-xs font-semibold text-slate-700">
+              Clearance purpose
+              <select value={reason} onChange={(event) => setReason(event.target.value)} className="mt-1.5 w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-xs font-normal text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option>Graduation &amp; Degree Award Semester Completion</option>
+                <option>Transfer / Migration Certificate</option>
+                <option>Course or Programme Completion</option>
+              </select>
+            </label>
+            <button type="submit" className="h-10 px-5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer">
+              <Send className="w-3.5 h-3.5" />
+              Submit application
+            </button>
+          </form>
+        </section>
+      )}
+
+      {submitted && (
+        <div className="flex items-center gap-2.5 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs text-emerald-800">
+          <CheckCircle2 className="w-4 h-4 shrink-0" />
+          Your clearance application was submitted and routed to all four departments.
+        </div>
+      )}
+
       {/* Header breadcrumb & summary */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-xl border border-slate-200 shadow-xs">
         <div>

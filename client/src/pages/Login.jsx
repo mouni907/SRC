@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { 
   Lock, 
@@ -107,7 +107,7 @@ export default function Login() {
                   placeholder="e.g. student1@college.edu or STU001"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all"
+                  className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                 />
                 <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
               </div>
@@ -128,7 +128,7 @@ export default function Login() {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-9 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all"
+                  className="w-full pl-9 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                 />
                 <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
                 <button
@@ -151,6 +151,10 @@ export default function Login() {
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </form>
+
+          <p className="text-center text-xs text-slate-500 pt-1">
+            New to DigiClear? <Link to="/signup" className="font-semibold text-blue-600 hover:text-blue-700">Create a student account</Link>
+          </p>
 
           {/* Quick Demo Access Bar */}
           <div className="pt-4 border-t border-slate-100 space-y-2">
