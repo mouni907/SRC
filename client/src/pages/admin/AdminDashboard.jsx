@@ -38,9 +38,6 @@ export default function AdminDashboard() {
         </div>
 
         <div className="flex items-center gap-3">
-          <span className="text-xs bg-purple-50 text-purple-700 px-3 py-1 rounded-full border border-purple-200 font-medium hidden sm:inline-block">
-            Role: Dean / Academic Administrator
-          </span>
           <button
             onClick={logout}
             className="text-xs font-semibold text-red-600 hover:text-red-700 flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-red-200 hover:bg-red-50 transition-colors cursor-pointer"
