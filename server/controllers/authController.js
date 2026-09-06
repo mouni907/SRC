@@ -136,12 +136,28 @@ export const login = async (req, res) => {
 
 export const signup = async (req, res) => {
   try {
-    const { name, email, password, studentId, department } = req.body;
+    const { name, email, password, studentId, department, role = 'student' } = req.body;
+    const allowedRoles = ['student', 'department', 'admin'];
+    const departmentRoles = ['library', 'hostel', 'sports', 'accounts'];
 
-    if (!name || !email || !password || !studentId || !department) {
+    if (!name || !email || !password || !allowedRoles.includes(role)) {
       return res.status(400).json({
         success: false,
         message: 'Please complete all required registration fields'
+      });
+    }
+
+    if (role === 'student' && !studentId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Student ID is required for student registration'
+      });
+    }
+
+    if (role === 'department' && !departmentRoles.includes(department)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please select a valid department desk'
       });
     }
 
@@ -153,9 +169,9 @@ export const signup = async (req, res) => {
     }
 
     const normalizedEmail = email.trim().toLowerCase();
-    const normalizedStudentId = studentId.trim().toUpperCase();
+    const normalizedStudentId = studentId?.trim().toUpperCase();
     const existingUser = USERS.find(
-      user => user.email.toLowerCase() === normalizedEmail || user.studentId?.toLowerCase() === normalizedStudentId.toLowerCase()
+      user => user.email.toLowerCase() === normalizedEmail || (normalizedStudentId && user.studentId?.toLowerCase() === normalizedStudentId.toLowerCase())
     );
 
     if (existingUser) {
@@ -170,9 +186,9 @@ export const signup = async (req, res) => {
       name: name.trim(),
       email: normalizedEmail,
       password,
-      role: 'student',
-      studentId: normalizedStudentId,
-      department: department.trim(),
+      role,
+      studentId: role === 'student' ? normalizedStudentId : undefined,
+      department: role === 'department' ? department : null,
       avatar: name.trim().charAt(0).toUpperCase()
     };
 

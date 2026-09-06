@@ -153,7 +153,7 @@ export default function Login() {
           </form>
 
           <p className="text-center text-xs text-slate-500 pt-1">
-            New to DigiClear? <Link to="/signup" className="font-semibold text-blue-600 hover:text-blue-700">Create a student account</Link>
+            New to DigiClear? <Link to="/signup" className="font-semibold text-blue-600 hover:text-blue-700">Choose an account type</Link>
           </p>
 
           {/* Quick Demo Access Bar */}

@@ -117,6 +117,7 @@ export default function App() {
           {/* Public Authentication Route */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/signup/:role" element={<Signup />} />
 
           {/* Public Verification Route */}
           <Route path="/verify/:id" element={<VerifyCertificate />} />
