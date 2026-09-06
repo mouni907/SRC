@@ -10,8 +10,13 @@ dotenv.config();
 const PORT = 3000;
 
 async function startServer() {
-  await connectDB();
-  await seedDemoUsers();
+  const db = await connectDB();
+
+  if (db) {
+    await seedDemoUsers();
+  } else {
+    console.log('[DigiClear] Running in demo mode without MongoDB. Auth data is loaded in-memory for local preview.');
+  }
 
   // Vite middleware for development
   if (process.env.NODE_ENV !== 'production') {

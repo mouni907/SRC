@@ -18,10 +18,25 @@ const navItems = [
   { label: 'Reports', path: '/department/reports', icon: Activity }
 ];
 
+const getDepartmentRoleLabel = (department) => {
+  switch (department) {
+    case 'hostel':
+      return 'Hostel Warden';
+    case 'library':
+      return 'Chief Librarian';
+    case 'accounts':
+      return 'Accounts Officer';
+    default:
+      return 'Sports Director';
+  }
+};
+
 export default function DepartmentPortalLayout({ children, title = 'Sports Department' }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth();
+  const department = user?.department || 'sports';
+  const roleLabel = getDepartmentRoleLabel(department);
 
   const signOut = async () => {
     await logout();
@@ -47,8 +62,8 @@ export default function DepartmentPortalLayout({ children, title = 'Sports Depar
         </nav>
         <div className="border-t border-white/10 p-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-500/20 text-xs font-bold text-blue-200">{user?.name?.charAt(0) || 'S'}</div>
-            <div className="min-w-0 flex-1"><p className="truncate text-xs font-semibold text-white">{user?.name || 'Sports Officer'}</p><p className="truncate text-[10px] text-slate-400">Sports Director</p></div>
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-500/20 text-xs font-bold text-blue-200">{user?.name?.charAt(0) || 'H'}</div>
+            <div className="min-w-0 flex-1"><p className="truncate text-xs font-semibold text-white">{user?.name || 'Hostel Officer'}</p><p className="truncate text-[10px] text-slate-400">{roleLabel}</p></div>
             <button type="button" onClick={signOut} aria-label="Log out" className="text-slate-400 hover:text-white"><LogOut className="h-4 w-4" /></button>
           </div>
         </div>
