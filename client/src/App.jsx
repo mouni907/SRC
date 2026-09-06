@@ -18,6 +18,7 @@ import DepartmentRequests from './pages/department/DepartmentRequests';
 import RequestDetails from './pages/department/RequestDetails';
 import MyDepartment from './pages/department/MyDepartment';
 import DepartmentReports from './pages/department/DepartmentReports';
+import DepartmentNotifications from './pages/department/DepartmentNotifications';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import VerifyCertificate from './pages/VerifyCertificate';
 
@@ -104,6 +105,7 @@ function DepartmentPortalRoutes() {
       <Route path="requests/:requestId" element={<RequestDetails />} />
       <Route path="my-department" element={<MyDepartment />} />
       <Route path="reports" element={<DepartmentReports />} />
+      <Route path="notifications" element={<DepartmentNotifications />} />
       <Route path="*" element={<Navigate to="dashboard" replace />} />
     </Routes>
   );

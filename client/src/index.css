@@ -86,4 +86,10 @@
     box-shadow: 0 10px 24px rgb(15 23 42 / 0.08);
     border-color: rgb(148 163 184 / 0.8);
   }
+
+  .dept-notifications-card,
+  .dept-notifications-card:hover {
+    transition: none;
+    transform: none;
+  }
 }
