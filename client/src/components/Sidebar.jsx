@@ -15,10 +15,6 @@ export default function Sidebar({ activeTab, onTabChange }) {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
 
-  if (user?.role !== 'student') {
-    return null;
-  }
-
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', path: '/student/dashboard', icon: LayoutDashboard },
     { id: 'clearance', label: 'Clearance Request', path: '/student/clearance', icon: FileText },
@@ -43,7 +39,9 @@ export default function Sidebar({ activeTab, onTabChange }) {
     <aside id="sleek-sidebar" className="w-64 bg-slate-900 text-white flex flex-col shrink-0 h-screen sticky top-0 border-r border-slate-800 select-none z-30">
       <div className="p-6 border-b border-slate-800 cursor-pointer" onClick={() => navigate('/student/dashboard')}>
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center font-bold text-lg text-white shadow-sm">D</div>
+          <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center font-bold text-lg text-white shadow-sm">
+            D
+          </div>
           <div>
             <h1 className="text-xl font-bold tracking-tight text-white leading-none">DigiClear</h1>
             <p className="text-[11px] text-slate-400 mt-1 font-medium">Digital Clearance System</p>
@@ -52,7 +50,9 @@ export default function Sidebar({ activeTab, onTabChange }) {
       </div>
 
       <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto">
-        <div className="px-3 py-1.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Student Portal</div>
+        <div className="px-3 py-1.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+          Student Portal
+        </div>
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname.startsWith(item.path) || activeTab === item.id;

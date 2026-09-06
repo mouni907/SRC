@@ -218,7 +218,7 @@ export default function StudentDashboard() {
       </section>
 
       {/* Student Profile Overview Card */}
-      <section className="bg-white rounded-xl shadow-xs border border-slate-200 p-6">
+      {/*<section className="bg-white rounded-xl shadow-xs border border-slate-200 p-6">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Student Academic Credentials</h3>
@@ -250,7 +250,7 @@ export default function StudentDashboard() {
             <span className="font-semibold text-slate-800 text-sm mt-0.5 block">{student.roomNo || student.batch}</span>
           </div>
         </div>
-      </section>
+      </section>*/}
     </div>
   );
 }

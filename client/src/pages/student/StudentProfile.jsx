@@ -1,360 +1,395 @@
+
+
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useClearance } from '../../context/ClearanceContext';
-import { 
-  User, 
-  Mail, 
-  Phone, 
-  Building2, 
-  GraduationCap, 
-  Calendar, 
-  Home, 
-  CheckCircle2, 
-  FileText, 
-  Save, 
-  RotateCcw, 
-  ShieldCheck, 
-  ArrowLeft,
-  AlertCircle
+import {
+  Check,
+  CheckCircle2,
+  FileText,
+  Mail,
+  Phone,
+  RotateCcw,
+  Save,
+  User,
+  UserRound
 } from 'lucide-react';
 
+const getFormData = (student) => ({
+  name: student.name || '',
+  collegeId: student.collegeId || '',
+  hallTicket: student.hallTicket || '',
+  email: student.email || '',
+  phone: student.phone || '+91 98765 43210'
+});
+
 export default function StudentProfile() {
-  const navigate = useNavigate();
   const { student, updateStudentProfile } = useClearance();
 
-  const [formData, setFormData] = useState({
-    name: student.name || '',
-    collegeId: student.collegeId || '',
-    hallTicket: student.hallTicket || '',
-    email: student.email || '',
-    phone: student.phone || '+91 98765 43210',
-    department: student.department || '',
-    degree: student.degree || '',
-    semester: student.semester || 'Semester VIII',
-    batch: student.batch || '2022 - 2026',
-    roomNo: student.roomNo || 'Hostel Block B - Room 314',
-    cgpa: student.cgpa || '8.84'
-  });
-
+  const [formData, setFormData] = useState(() => getFormData(student));
   const [savedSuccess, setSavedSuccess] = useState(false);
-  const [error, setError] = useState('');
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+
+    setFormData((current) => ({
+      ...current,
+      [name]: value
+    }));
+
     setSavedSuccess(false);
-    setError('');
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!formData.name.trim()) {
-      setError('Please provide a valid full name.');
-      return;
-    }
-    if (!formData.collegeId.trim()) {
-      setError('Please provide your university roll or college ID.');
-      return;
-    }
+  const handleSubmit = (event) => {
+    event.preventDefault();
 
     updateStudentProfile(formData);
     setSavedSuccess(true);
-    setTimeout(() => {
+
+    window.setTimeout(() => {
       setSavedSuccess(false);
     }, 4000);
   };
 
   const handleReset = () => {
-    setFormData({
-      name: student.name || '',
-      collegeId: student.collegeId || '',
-      hallTicket: student.hallTicket || '',
-      email: student.email || '',
-      phone: student.phone || '+91 98765 43210',
-      department: student.department || '',
-      degree: student.degree || '',
-      semester: student.semester || 'Semester VIII',
-      batch: student.batch || '2022 - 2026',
-      roomNo: student.roomNo || 'Hostel Block B - Room 314',
-      cgpa: student.cgpa || '8.84'
-    });
+    setFormData(getFormData(student));
     setSavedSuccess(false);
-    setError('');
   };
 
+  const inputClass =
+    'mt-2 h-10 w-full rounded-md border border-[#d7e2f2] bg-white px-3 text-xs text-[#172b55] outline-none transition-all focus:border-[#4d75f6] focus:ring-2 focus:ring-[#4d75f6]/10';
+
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-xl border border-slate-200 shadow-xs">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-base shadow-xs">
-            {formData.name.charAt(0) || 'S'}
+    <div className="mx-auto w-full max-w-5xl text-[#172b55]">
+
+      {/* =====================================================
+          STUDENT PROFILE BANNER
+          ===================================================== */}
+      <div
+        className="
+          relative
+          mb-5
+          h-[115px]
+          w-full
+          overflow-hidden
+          rounded-xl
+          border
+          border-[#dce7f7]
+          bg-[#eaf2ff]
+          shadow-[0_6px_22px_rgba(48,78,137,0.07)]
+        "
+      >
+
+        <div className="absolute inset-0 bg-gradient-to-br from-[#dcecff] via-[#c8ddfa] to-[#a8c9f0]" />
+
+        {/* =================================================
+            LEFT SIDE CONTENT
+            ================================================= */}
+        <div className="relative z-10 flex h-full items-center px-5 sm:px-7">
+
+          {/* Avatar */}
+          <div
+            className="
+              relative
+              flex
+              h-16
+              w-16
+              shrink-0
+              items-center
+              justify-center
+              rounded-full
+              bg-[#3969f5]
+              text-xl
+              font-semibold
+              text-white
+              shadow-[0_5px_15px_rgba(57,105,245,0.30)]
+            "
+          >
+            {(formData.name.charAt(0) || 'S').toUpperCase()}
+
+            {/* Online status */}
+            <span
+              className="
+                absolute
+                bottom-0
+                right-0
+                h-3.5
+                w-3.5
+                rounded-full
+                border-2
+                border-[#eaf2ff]
+                bg-[#16c784]
+              "
+            />
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold text-slate-900 leading-tight">Student Academic Profile</h1>
-              <span className="text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded-full flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3" />
-                Active Student
-              </span>
-            </div>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Edit your credentials and contact information synchronized with your No-Dues Clearance record.
+
+          {/* Text */}
+          <div className="ml-4 min-w-0">
+
+            <p className="text-[9px] font-medium uppercase tracking-[0.14em] text-[#58709c]">
+              Student Profile
             </p>
+
+            <h1 className="mt-0.5 truncate text-xl font-bold leading-tight text-[#102657] sm:text-2xl">
+              {formData.name || 'Student'}
+            </h1>
+
+            <p className="mt-1 text-[9px] text-[#60749c] sm:text-[10px]">
+              Keep your personal information updated for a smooth No-Dues process.
+            </p>
+
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={() => navigate('/student/dashboard')}
-          className="px-3.5 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors flex items-center gap-1.5 self-start sm:self-auto cursor-pointer"
+        {/* =================================================
+            RIGHT SIDE SLOGAN
+            ================================================= */}
+        <div
+          className="
+            absolute
+            right-[14%]
+            top-3
+            z-10
+            hidden
+            rotate-[-4deg]
+            text-center
+            sm:block
+          "
         >
-          <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Back to Dashboard</span>
-        </button>
+        </div>
       </div>
 
-      {/* Feedback Messages */}
-      {savedSuccess && (
-        <div className="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-xs flex items-center gap-2.5 shadow-xs transition-all">
-          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-          <span className="font-medium">
-            Profile updated successfully! All academic credentials, clearance records, and certificate previews are synchronized.
-          </span>
-        </div>
-      )}
+      {/* =====================================================
+          PERSONAL INFORMATION CARD
+          ===================================================== */}
+      <div className="overflow-hidden rounded-2xl border border-[#dfe8f6] bg-white shadow-[0_12px_35px_rgba(48,78,137,0.08)]">
 
-      {error && (
-        <div className="p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl text-xs flex items-center gap-2.5 shadow-xs transition-all">
-          <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
-          <span className="font-medium">{error}</span>
-        </div>
-      )}
+        <form onSubmit={handleSubmit} className="p-5 sm:p-8">
 
-      {/* Main Profile Form */}
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 shadow-xs p-6 sm:p-8 space-y-6">
-        <div>
-          <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-1">
-            Personal &amp; Contact Information
-          </h2>
-          <p className="text-xs text-slate-500 mb-4">
-            Official identity as registered in the University Student Information System (SIS).
-          </p>
+          {/* Header */}
+          <div className="mb-6 flex items-center justify-between border-b border-[#edf1f8] pb-4">
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5" htmlFor="field-name">
-                Full Name (Institutional Records) *
-              </label>
-              <div className="relative">
-                <input
-                  id="field-name"
-                  type="text"
-                  name="name"
-                  required
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
-                />
-                <User className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+            <div className="flex items-center gap-3">
+
+              <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#5678fa] text-white shadow-sm">
+                <UserRound className="h-5 w-5" />
+              </span>
+
+              <div>
+                <h2 className="text-base font-bold text-[#162b59] sm:text-lg">
+                  Personal Information
+                </h2>
+
+                <p className="mt-0.5 text-[11px] text-[#7183a5] sm:text-xs">
+                  Your basic details and contact information
+                </p>
               </div>
+
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5" htmlFor="field-email">
-                Institutional Email Address *
-              </label>
-              <div className="relative">
-                <input
-                  id="field-email"
-                  type="email"
-                  name="email"
-                  required
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
-                />
-                <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
-              </div>
-            </div>
+            {/* Active student */}
+            <span className="flex items-center gap-1.5 rounded-full bg-[#e5faf2] px-3 py-1.5 text-[10px] font-semibold text-[#16a875]">
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5" htmlFor="field-phone">
-                Contact Phone Number
-              </label>
-              <div className="relative">
-                <input
-                  id="field-phone"
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  placeholder="+91 98765 43210"
-                  className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
-                />
-                <Phone className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
-              </div>
-            </div>
+              <span className="h-1.5 w-1.5 rounded-full bg-[#16c788]" />
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5" htmlFor="field-room">
-                Hostel Block &amp; Room Assignment
-              </label>
-              <div className="relative">
-                <input
-                  id="field-room"
-                  type="text"
-                  name="roomNo"
-                  value={formData.roomNo}
-                  onChange={handleChange}
-                  placeholder="e.g. Hostel Block B - Room 314"
-                  className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
-                />
-                <Home className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
-              </div>
-            </div>
+              Active Student
+
+            </span>
+
           </div>
-        </div>
 
-        <div className="pt-4 border-t border-slate-100">
-          <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-1">
-            Academic &amp; Departmental Credentials
-          </h2>
-          <p className="text-xs text-slate-500 mb-4">
-            Details embedded onto your official No-Dues Clearance Certificate and verification QR code.
-          </p>
+          {/* =================================================
+              FORM FIELDS
+              ================================================= */}
+          <div className="grid grid-cols-1 gap-x-10 gap-y-5 sm:grid-cols-2">
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5" htmlFor="field-collegeId">
-                University Roll / College ID *
-              </label>
+            {/* Full Name */}
+            <label className="relative block pl-11 text-[11px] font-semibold text-[#1b2d52]">
+
+              <span className="absolute left-0 top-6 flex h-8 w-8 items-center justify-center rounded-lg bg-[#f1f5fd] text-[#17366f]">
+                <User className="h-4 w-4" />
+              </span>
+
+              Full Name
+
               <input
-                id="field-collegeId"
+                aria-label="Full Name"
+                className={`${inputClass} text-xs`}
+                type="text"
+                name="name"
+                required
+                value={formData.name}
+                onChange={handleChange}
+              />
+
+            </label>
+
+            {/* College ID */}
+            <label className="relative block pl-11 text-[11px] font-semibold text-[#1b2d52]">
+
+              <span className="absolute left-0 top-6 flex h-8 w-8 items-center justify-center rounded-lg bg-[#f1f5fd] text-[#17366f]">
+                <FileText className="h-4 w-4" />
+              </span>
+
+              University / College ID
+
+              <input
+                aria-label="University or College ID"
+                className={`${inputClass} text-xs`}
                 type="text"
                 name="collegeId"
                 required
                 value={formData.collegeId}
                 onChange={handleChange}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
               />
-            </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5" htmlFor="field-hallTicket">
-                Examination Hall Ticket Number
-              </label>
+            </label>
+
+            {/* Hall Ticket */}
+            <label className="relative block pl-11 text-[11px] font-semibold text-[#1b2d52]">
+
+              <span className="absolute left-0 top-6 flex h-8 w-8 items-center justify-center rounded-lg bg-[#f1f5fd] text-[#17366f]">
+                <FileText className="h-4 w-4" />
+              </span>
+
+              Hall Ticket Number
+
               <input
-                id="field-hallTicket"
+                aria-label="Hall Ticket Number"
+                className={`${inputClass} text-xs`}
                 type="text"
                 name="hallTicket"
                 value={formData.hallTicket}
                 onChange={handleChange}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
               />
-            </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5" htmlFor="field-batch">
-                Academic Batch
-              </label>
-              <input
-                id="field-batch"
-                type="text"
-                name="batch"
-                value={formData.batch}
-                onChange={handleChange}
-                placeholder="2022 - 2026"
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
-              />
-            </div>
+            </label>
 
-            <div className="sm:col-span-2">
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5" htmlFor="field-department">
-                Department / Academic Discipline *
-              </label>
+            {/* Email */}
+            <label className="relative block pl-11 text-[11px] font-semibold text-[#1b2d52]">
+
+              <span className="absolute left-0 top-6 flex h-8 w-8 items-center justify-center rounded-lg bg-[#f1f5fd] text-[#17366f]">
+                <Mail className="h-4 w-4" />
+              </span>
+
+              Email Address
+
               <input
-                id="field-department"
-                type="text"
-                name="department"
+                aria-label="Email Address"
+                className={`${inputClass} text-xs`}
+                type="email"
+                name="email"
                 required
-                value={formData.department}
+                value={formData.email}
                 onChange={handleChange}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
               />
-            </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5" htmlFor="field-degree">
-                Degree Program
-              </label>
-              <input
-                id="field-degree"
-                type="text"
-                name="degree"
-                value={formData.degree}
-                onChange={handleChange}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
-              />
-            </div>
+            </label>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5" htmlFor="field-semester">
-                Current Semester
-              </label>
-              <input
-                id="field-semester"
-                type="text"
-                name="semester"
-                value={formData.semester}
-                onChange={handleChange}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
-              />
-            </div>
+            {/* Phone */}
+            <label className="relative block pl-11 text-[11px] font-semibold text-[#1b2d52]">
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5" htmlFor="field-cgpa">
-                Cumulative GPA (CGPA)
-              </label>
+              <span className="absolute left-0 top-6 flex h-8 w-8 items-center justify-center rounded-lg bg-[#f1f5fd] text-[#17366f]">
+                <Phone className="h-4 w-4" />
+              </span>
+
+              Phone Number
+
               <input
-                id="field-cgpa"
-                type="text"
-                name="cgpa"
-                value={formData.cgpa}
+                aria-label="Phone Number"
+                className={`${inputClass} text-xs`}
+                type="tel"
+                name="phone"
+                value={formData.phone}
                 onChange={handleChange}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
               />
-            </div>
+
+            </label>
+
           </div>
+
+          {/* =================================================
+              FOOTER
+              ================================================= */}
+          <div className="mt-7 flex flex-col gap-4 border-t border-[#edf1f8] pt-5 sm:flex-row sm:items-center">
+
+            <div className="flex gap-2">
+
+              {/* Save */}
+              <button
+                type="submit"
+                className="
+                  flex
+                  h-10
+                  items-center
+                  gap-2
+                  rounded-lg
+                  bg-[#315ef4]
+                  px-4
+                  text-xs
+                  font-semibold
+                  text-white
+                  shadow-[0_4px_10px_rgba(49,94,244,0.2)]
+                  transition-all
+                  hover:bg-[#244bd2]
+                  active:scale-[0.98]
+                "
+              >
+                {savedSuccess ? (
+                  <Check className="h-4 w-4" />
+                ) : (
+                  <Save className="h-4 w-4" />
+                )}
+
+                {savedSuccess ? 'Saved' : 'Save Changes'}
+              </button>
+
+              {/* Reset */}
+              <button
+                type="button"
+                onClick={handleReset}
+                className="
+                  flex
+                  h-10
+                  items-center
+                  gap-2
+                  rounded-lg
+                  border
+                  border-[#d9e2f3]
+                  bg-white
+                  px-4
+                  text-xs
+                  font-semibold
+                  text-[#273b63]
+                  transition-all
+                  hover:bg-[#f5f8fe]
+                  active:scale-[0.98]
+                "
+              >
+                <RotateCcw className="h-4 w-4" />
+                Reset
+              </button>
+
+            </div>
+
+            <p className="text-[10px] text-[#8493ad] sm:ml-auto">
+              Last updated: 12 Nov 2024, 10:32 AM
+            </p>
+
+          </div>
+
+        </form>
+      </div>
+
+      {/* Success message */}
+      {savedSuccess && (
+        <div className="mt-3 flex items-center gap-2 text-xs font-medium text-[#159b6d]">
+          <CheckCircle2 className="h-4 w-4" />
+          Profile updated successfully.
         </div>
+      )}
 
-        {/* Action Controls */}
-        <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2 text-xs text-slate-500">
-            <ShieldCheck className="w-4 h-4 text-emerald-600" />
-            <span>Updates are instantly synchronized across certificate &amp; institutional records.</span>
-          </div>
-
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            <button
-              type="button"
-              onClick={handleReset}
-              className="w-full sm:w-auto px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span>Discard Changes</span>
-            </button>
-
-            <button
-              type="submit"
-              className="w-full sm:w-auto px-5 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
-            >
-              <Save className="w-3.5 h-3.5" />
-              <span>Save Profile Changes</span>
-            </button>
-          </div>
-        </div>
-      </form>
     </div>
   );
 }
+
+
