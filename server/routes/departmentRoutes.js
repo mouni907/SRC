@@ -7,7 +7,20 @@ const router = express.Router();
 
 router.get('/requests', verifyToken, checkRole('department'), (req, res) => {
   const snapshot = getStudentClearanceSnapshot(req.user.studentId || 'STU001');
-  res.status(200).json({ success: true, request: snapshot });
+  const department = req.user.department;
+  const departmentRecord = snapshot.departments[department];
+
+  if (!departmentRecord) {
+    return res.status(403).json({ success: false, message: 'No clearance data for the assigned department' });
+  }
+
+  return res.status(200).json({
+    success: true,
+    request: {
+      ...snapshot,
+      departments: { [department]: departmentRecord }
+    }
+  });
 });
 
 router.patch('/requests/:id/approve', verifyToken, checkRole('department'), requireDepartment, (req, res) => {

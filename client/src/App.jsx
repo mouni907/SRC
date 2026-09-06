@@ -12,6 +12,11 @@ import Certificate from './pages/student/Certificate';
 import Notifications from './pages/student/Notifications';
 import StudentProfile from './pages/student/StudentProfile';
 import DepartmentDashboard from './pages/department/DepartmentDashboard';
+import DepartmentPortalLayout from './pages/department/DepartmentPortalLayout';
+import DepartmentRequests from './pages/department/DepartmentRequests';
+import RequestDetails from './pages/department/RequestDetails';
+import MyDepartment from './pages/department/MyDepartment';
+import DepartmentReports from './pages/department/DepartmentReports';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import VerifyCertificate from './pages/VerifyCertificate';
 
@@ -90,6 +95,19 @@ function RootRedirect() {
   return <Navigate to="/login" replace />;
 }
 
+function DepartmentPortalRoutes() {
+  return (
+    <Routes>
+      <Route path="dashboard" element={<DepartmentDashboard />} />
+      <Route path="requests" element={<DepartmentRequests />} />
+      <Route path="requests/:requestId" element={<RequestDetails />} />
+      <Route path="my-department" element={<MyDepartment />} />
+      <Route path="reports" element={<DepartmentReports />} />
+      <Route path="*" element={<Navigate to="dashboard" replace />} />
+    </Routes>
+  );
+}
+
 export default function App() {
   return (
     <AuthProvider>
@@ -116,7 +134,7 @@ export default function App() {
             path="/department/*" 
             element={
               <ProtectedRoute allowedRoles={['department']}>
-                <DepartmentDashboard />
+                <DepartmentPortalRoutes />
               </ProtectedRoute>
             } 
           />

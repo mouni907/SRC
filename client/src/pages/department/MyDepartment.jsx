@@ -1,0 +1,23 @@
+import React from 'react';
+import { CheckCircle2, ClipboardCheck, FileCheck2, ShieldCheck } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { useClearance } from '../../context/ClearanceContext';
+import DepartmentPortalLayout from './DepartmentPortalLayout';
+import { getSportsRequest, getSportsStats } from './departmentData';
+
+export default function MyDepartment() {
+  const { user } = useAuth();
+  const { clearanceRequest } = useClearance();
+  const request = getSportsRequest(clearanceRequest);
+  const stats = getSportsStats(clearanceRequest);
+  const processes = ['Sports Equipment Verification', 'Locker Clearance', 'Sports Participation Records', 'Final Sports Clearance'];
+
+  return (
+    <DepartmentPortalLayout title="Sports Department">
+      <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"><p className="text-lg font-bold">Sports Department</p><p className="mt-1 text-xs text-slate-500">Sports Department Overview</p><div className="mt-5 grid gap-4 border-t border-slate-100 pt-5 sm:grid-cols-3"><div><p className="text-[11px] uppercase tracking-wide text-slate-400">Department</p><p className="mt-1 text-sm font-semibold">Sports</p></div><div><p className="text-[11px] uppercase tracking-wide text-slate-400">Department Officer</p><p className="mt-1 text-sm font-semibold">{user?.name || 'Coach S. Mehta'}</p></div><div><p className="text-[11px] uppercase tracking-wide text-slate-400">Role</p><p className="mt-1 text-sm font-semibold">Sports Director</p></div></div></section>
+      <section><div className="mb-3 flex items-center justify-between"><h2 className="text-sm font-bold">Sports Department Overview</h2><span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-bold text-emerald-700">Active</span></div><div className="grid grid-cols-2 gap-3 lg:grid-cols-4"><div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"><p className="text-xs text-slate-500">Total Sports Requests</p><p className="mt-2 text-2xl font-bold">{stats.total}</p></div><div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"><p className="text-xs text-slate-500">Pending</p><p className="mt-2 text-2xl font-bold text-amber-600">{stats.pending}</p></div><div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"><p className="text-xs text-slate-500">Approved</p><p className="mt-2 text-2xl font-bold text-emerald-600">{stats.approved}</p></div><div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"><p className="text-xs text-slate-500">Rejected</p><p className="mt-2 text-2xl font-bold text-red-600">{stats.rejected}</p></div></div></section>
+      <section className="grid gap-5 lg:grid-cols-2"><div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"><h2 className="text-sm font-bold">Sports Clearance Process</h2><div className="mt-4 space-y-3">{processes.map((process) => <div key={process} className="flex items-center gap-3 text-xs font-medium text-slate-700"><CheckCircle2 className="h-4 w-4 text-emerald-600" />{process}</div>)}</div></div><div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"><h2 className="text-sm font-bold">Department Information</h2><div className="mt-4 space-y-3 text-xs"><p><span className="text-slate-400">Department:</span> <strong>Sports</strong></p><p><span className="text-slate-400">Officer:</span> <strong>{user?.name || 'Coach S. Mehta'}</strong></p><p><span className="text-slate-400">Position:</span> <strong>Sports Director</strong></p><p><span className="text-slate-400">Status:</span> <strong className="text-emerald-600">Active</strong></p></div></div></section>
+      <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"><h2 className="text-sm font-bold">Recent Sports Clearance Activity</h2><div className="mt-4 divide-y divide-slate-100">{request && <div className="flex items-center gap-3 py-3"><div className="rounded-lg bg-blue-50 p-2 text-blue-600"><ShieldCheck className="h-4 w-4" /></div><div><p className="text-xs font-semibold">{request.studentName} — Sports clearance {request.status}</p><p className="mt-1 text-[11px] text-slate-500">Student ID: {request.studentId}</p></div></div>}<div className="flex items-center gap-3 py-3"><div className="rounded-lg bg-slate-50 p-2 text-slate-500"><ClipboardCheck className="h-4 w-4" /></div><div><p className="text-xs font-semibold">Sports clearance records</p><p className="mt-1 text-[11px] text-slate-500">Activity is sourced from the current Sports clearance store.</p></div></div></div></section>
+    </DepartmentPortalLayout>
+  );
+}

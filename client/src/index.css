@@ -10,6 +10,26 @@
   }
 }
 
+@media (min-width: 768px) {
+  .dept-dashboard-sidebar {
+    display: flex;
+  }
+}
+
+@media (min-width: 1024px) {
+  .dept-dashboard-stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .dept-dashboard-main {
+    grid-template-columns: minmax(0, 3fr) minmax(280px, 1fr);
+  }
+
+  .dept-dashboard-request-details {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (hover: hover) and (pointer: fine) {
   .tooltip-trigger {
     position: relative;

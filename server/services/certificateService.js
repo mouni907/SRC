@@ -71,6 +71,11 @@ export const updateDepartmentStatus = ({ studentId, department, status, reason }
     throw new Error('Invalid department status');
   }
 
+  const currentStatus = clearanceStore.departments[department]?.status;
+  if (currentStatus === 'approved' || currentStatus === 'rejected') {
+    throw new Error('Department decision is final and cannot be changed');
+  }
+
   clearanceStore.studentId = studentId || clearanceStore.studentId;
   clearanceStore.departments[department] = {
     status,

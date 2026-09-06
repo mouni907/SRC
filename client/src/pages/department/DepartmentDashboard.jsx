@@ -1,195 +1,27 @@
-import React, { useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { CheckCircle2, Clock3, FileText, Trophy, XCircle } from 'lucide-react';
 import { useClearance } from '../../context/ClearanceContext';
-import StatusBadge from '../../components/StatusBadge';
-import { 
-  Building2, 
-  CheckCircle2, 
-  XCircle, 
-  Clock, 
-  Search, 
-  Filter, 
-  User, 
-  LogOut,
-  AlertCircle,
-  FileCheck2,
-  Calendar
-} from 'lucide-react';
+import DepartmentPortalLayout from './DepartmentPortalLayout';
+import { getSportsRequest, getSportsStats } from './departmentData';
 
 export default function DepartmentDashboard() {
-  const { user, logout } = useAuth();
-  const { clearanceRequest, updateDepartmentStatus } = useClearance();
-
-  const deptKey = user?.department || 'library';
-  const deptInfo = clearanceRequest.departments[deptKey] || {
-    name: user?.name || 'Department Desk',
-    status: 'pending',
-    remarks: ''
-  };
-
-  const [remarksInput, setRemarksInput] = useState('');
-  const [activeTab, setActiveTab] = useState('all');
-
-  const handleApprove = () => {
-    updateDepartmentStatus(
-      deptKey, 
-      'approved', 
-      remarksInput || `Verified by ${user.name}. Institutional requirements fulfilled with zero dues.`
-    );
-    setRemarksInput('');
-  };
-
-  const handleReject = () => {
-    updateDepartmentStatus(
-      deptKey, 
-      'rejected', 
-      remarksInput || `Clearance suspended by ${user.name}. Pending clearance requirements.`
-    );
-    setRemarksInput('');
-  };
-
-  const currentStatus = deptInfo.status;
+  const navigate = useNavigate();
+  const { clearanceRequest } = useClearance();
+  const request = getSportsRequest(clearanceRequest);
+  const stats = getSportsStats(clearanceRequest);
+  const cards = [
+    ['Pending Requests', stats.pending, 'Awaiting verification', Clock3, 'text-amber-600'],
+    ['Approved Requests', stats.approved, 'Digitally signed', CheckCircle2, 'text-emerald-600'],
+    ['Rejected / Dues', stats.rejected, 'Outstanding actions', XCircle, 'text-red-600'],
+    ['Total Requests', stats.total, 'This semester', FileText, 'text-blue-600']
+  ];
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 antialiased">
-      {/* Top Department Header */}
-      <header className="h-16 bg-white border-b border-slate-200 px-6 sm:px-8 flex items-center justify-between sticky top-0 z-30">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-white shadow-xs">
-            {deptKey.charAt(0).toUpperCase()}
-          </div>
-          <div>
-            <h1 className="text-base font-bold text-slate-900 leading-tight">
-              {deptInfo.name} Clearance Desk
-            </h1>
-            <p className="text-[11px] text-slate-500 font-medium">
-              Reviewing Officer: {user?.name || 'Department Officer'}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <span className="text-xs bg-slate-100 text-slate-700 px-3 py-1 rounded-full border border-slate-200 font-medium hidden sm:inline-block">
-            Role: Department Staff
-          </span>
-          <button
-            onClick={logout}
-            className="text-xs font-semibold text-red-600 hover:text-red-700 flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-red-200 hover:bg-red-50 transition-colors cursor-pointer"
-          >
-            <LogOut className="w-3.5 h-3.5" />
-            <span>Sign Out</span>
-          </button>
-        </div>
-      </header>
-
-      {/* Main Container */}
-      <main className="max-w-6xl mx-auto p-6 sm:p-8 space-y-6">
-        {/* Metrics Row */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
-            <div className="flex items-center justify-between text-xs text-slate-400 font-medium uppercase">
-              <span>Pending Reviews</span>
-              <Clock className="w-4 h-4 text-amber-500" />
-            </div>
-            <p className="text-2xl font-bold text-slate-900 mt-2">
-              {currentStatus === 'pending' ? '1' : '0'}
-            </p>
-            <p className="text-[11px] text-slate-500 mt-0.5">Awaiting verification</p>
-          </div>
-
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
-            <div className="flex items-center justify-between text-xs text-slate-400 font-medium uppercase">
-              <span>Approved Applications</span>
-              <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-            </div>
-            <p className="text-2xl font-bold text-slate-900 mt-2">
-              {currentStatus === 'approved' ? '1' : '0'}
-            </p>
-            <p className="text-[11px] text-slate-500 mt-0.5">Digitally signed</p>
-          </div>
-
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
-            <div className="flex items-center justify-between text-xs text-slate-400 font-medium uppercase">
-              <span>Rejected / Dues</span>
-              <XCircle className="w-4 h-4 text-rose-500" />
-            </div>
-            <p className="text-2xl font-bold text-slate-900 mt-2">
-              {currentStatus === 'rejected' ? '1' : '0'}
-            </p>
-            <p className="text-[11px] text-slate-500 mt-0.5">Outstanding actions</p>
-          </div>
-        </div>
-
-        {/* Action Panel for Active Application */}
-        <div className="bg-white rounded-xl border border-slate-200 shadow-xs p-6 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded border border-blue-100">
-                  Incoming Clearance Request
-                </span>
-                <span className="font-mono text-xs text-slate-500">#REQ-991204</span>
-              </div>
-              <h2 className="text-lg font-bold text-slate-900 mt-1">Student: Arjun Sharma (STU/2024/772)</h2>
-              <p className="text-xs text-slate-500">Degree: B.Tech Computer Science • Semester VIII • Applied 03 Sep 2026</p>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-slate-400 font-medium">Desk Status:</span>
-              <StatusBadge status={currentStatus} />
-            </div>
-          </div>
-
-          {/* Department Note / History */}
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2 text-xs">
-            <div className="flex items-center justify-between">
-              <span className="font-bold text-slate-700 uppercase tracking-wider text-[10px]">
-                Current Desk Record
-              </span>
-              <span className="text-slate-400 text-[11px]">
-                {deptInfo.verifiedAt ? `Last stamped: ${deptInfo.verifiedAt}` : 'Awaiting officer sign-off'}
-              </span>
-            </div>
-            <p className="text-slate-700 italic">
-              "{deptInfo.remarks || 'No notes currently entered for this desk.'}"
-            </p>
-          </div>
-
-          {/* Decision Review Form */}
-          <div className="space-y-4 pt-2">
-            <label className="block text-xs font-semibold text-slate-700">
-              Department Official Decision Notes / Dues Remark:
-            </label>
-            <textarea
-              rows={3}
-              value={remarksInput}
-              onChange={(e) => setRemarksInput(e.target.value)}
-              placeholder="e.g. All laboratory equipment accounted for, no outstanding fines."
-              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all"
-            />
-
-            <div className="flex flex-col sm:flex-row items-center justify-end gap-3 pt-2">
-              <button
-                type="button"
-                onClick={handleReject}
-                className="w-full sm:w-auto px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                <XCircle className="w-4 h-4" />
-                <span>Reject / Flag Institutional Dues</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={handleApprove}
-                className="w-full sm:w-auto px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
-              >
-                <CheckCircle2 className="w-4 h-4" />
-                <span>Sign &amp; Approve Clearance</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
+    <DepartmentPortalLayout title="Sports Clearance Desk">
+      <section className="flex flex-col justify-between gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm lg:flex-row lg:items-center"><div className="flex items-center gap-4"><div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-600"><Trophy className="h-6 w-6" /></div><div><p className="text-lg font-bold tracking-tight">Sports Clearance Desk</p><p className="mt-1 text-xs text-slate-500">Review and process sports clearance requests</p></div></div><div className="border-l border-slate-200 pl-4 text-xs leading-relaxed text-slate-500 lg:text-right">“Sports build discipline, discipline builds character.”<br /><span className="font-semibold text-slate-400">— Department of Sports</span></div></section>
+      <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">{cards.map(([label, value, note, Icon, tone]) => <div key={label} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"><div className="flex items-start justify-between"><p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">{label}</p><Icon className={`h-4 w-4 ${tone}`} /></div><p className="mt-3 text-2xl font-bold">{value}</p><p className="mt-1 text-xs text-slate-500">{note}</p></div>)}</section>
+      {/*<section className="rounded-xl border border-slate-200 bg-white shadow-sm"><div className="flex items-center justify-between border-b border-slate-100 p-5"><div><h2 className="text-sm font-bold">Recent Sports Clearance Requests</h2><p className="mt-1 text-xs text-slate-500">Open a request to review documents and make a department decision.</p></div><button type="button" onClick={() => navigate('/department/requests')} className="text-xs font-semibold text-blue-600 hover:text-blue-800">View all</button></div>{request ? <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-sm font-bold">{request.studentName} <span className="font-mono text-xs font-medium text-slate-500">({request.studentId})</span></p><p className="mt-1 text-xs text-slate-500">Request #{request.id} <span className="mx-1">•</span> {request.appliedAt}</p></div><div className="flex items-center gap-3"><span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase ${request.status === 'approved' ? 'bg-emerald-50 text-emerald-700' : request.status === 'rejected' ? 'bg-red-50 text-red-700' : 'bg-amber-50 text-amber-700'}`}>{request.status}</span><button type="button" onClick={() => navigate(`/department/requests/${request.id}`)} className="rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-700">Open request</button></div></div> : <div className="p-8 text-center text-sm text-slate-500">No Sports requests available.</div>}</section>*/}
+    </DepartmentPortalLayout>
   );
 }
