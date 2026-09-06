@@ -15,7 +15,8 @@ const navItems = [
   { label: 'Dashboard', path: '/department/dashboard', icon: LayoutDashboard },
   { label: 'Clearance Requests', path: '/department/requests', icon: FileText },
   { label: 'My Department', path: '/department/my-department', icon: ShieldCheck },
-  { label: 'Reports', path: '/department/reports', icon: Activity }
+  { label: 'Reports', path: '/department/reports', icon: Activity },
+  { label: 'Notifications', path: '/department/notifications', icon: Bell }
 ];
 
 const getDepartmentRoleLabel = (department) => {
@@ -55,7 +56,7 @@ export default function DepartmentPortalLayout({ children, title = 'Sports Depar
         <nav className="flex-1 space-y-1 px-3 py-5">
           <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Department Portal</p>
           {navItems.map(({ label, path, icon: Icon }) => (
-            <button key={path} type="button" onClick={() => navigate(path)} className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-colors ${(location.pathname === path || (path === '/department/requests' && location.pathname.startsWith('/department/requests/'))) ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}>
+            <button key={path} type="button" onClick={() => navigate(path)} className={`dc-focus flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-colors ${(location.pathname === path || (path === '/department/requests' && location.pathname.startsWith('/department/requests/'))) ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}>
               <Icon className="h-4 w-4 shrink-0" /><span>{label}</span>
             </button>
           ))}

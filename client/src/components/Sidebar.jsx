@@ -36,14 +36,14 @@ export default function Sidebar({ activeTab, onTabChange }) {
   };
 
   return (
-    <aside id="sleek-sidebar" className="w-64 bg-slate-900 text-white flex flex-col shrink-0 h-screen sticky top-0 border-r border-slate-800 select-none z-30">
-      <div className="p-6 border-b border-slate-800 cursor-pointer" onClick={() => navigate('/student/dashboard')}>
+    <aside id="sleek-sidebar" className="w-64 bg-[#0f1f36] text-white flex flex-col shrink-0 h-screen sticky top-0 border-r border-slate-800 select-none z-30">
+      <div className="p-5 border-b border-white/10 cursor-pointer" onClick={() => navigate('/student/dashboard')}>
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center font-bold text-lg text-white shadow-sm">
+          <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-lg text-white shadow-sm">
             D
           </div>
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-white leading-none">DigiClear</h1>
+            <h1 className="text-lg font-bold tracking-tight text-white leading-none">DigiClear</h1>
             <p className="text-[11px] text-slate-400 mt-1 font-medium">Digital Clearance System</p>
           </div>
         </div>
@@ -60,13 +60,13 @@ export default function Sidebar({ activeTab, onTabChange }) {
             <button
               key={item.id}
               onClick={() => handleNavClick(item)}
-              className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-lg text-sm font-medium transition-all text-left cursor-pointer ${
+              className={`dc-focus w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-left cursor-pointer ${
                 isActive
                   ? 'bg-blue-600 text-white shadow-xs'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/80'
               }`}
             >
-              <Icon className="w-5 h-5 shrink-0" />
+              <Icon className="w-4 h-4 shrink-0" />
               <span>{item.label}</span>
             </button>
           );

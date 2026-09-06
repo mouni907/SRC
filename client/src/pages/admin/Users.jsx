@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Search, ShieldCheck, UserRound } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import AdminPortalLayout from './AdminPortalLayout';
 
 export default function Users() {
-  return (
-    <div className="p-6">
-      <h2 className="text-xl font-bold text-slate-900">Admin Users</h2>
-      <p className="text-xs text-slate-500">Scheduled for Phase 10</p>
-    </div>
-  );
+  const { user } = useAuth();
+  const [query, setQuery] = useState('');
+  const rows = [{ name: user?.name || 'Dean Administration', id: user?.id || 'usr_admin', role: 'Administrator', department: 'Academic Governance', status: 'Active' }];
+  const visible = rows.filter((row) => `${row.name} ${row.id} ${row.role}`.toLowerCase().includes(query.toLowerCase()));
+  return <AdminPortalLayout title="Users"><section className="flex flex-col justify-between gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:flex-row sm:items-center"><div><h1 className="text-xl font-bold">User Directory</h1><p className="mt-1 text-xs text-slate-500">Institutional identities and role assignments.</p></div><label className="relative block sm:w-72"><Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search users" className="h-9 w-full rounded-lg border border-slate-200 pl-9 pr-3 text-xs outline-none focus:border-blue-400" /></label></section><section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"><table className="w-full text-left text-xs"><thead className="bg-slate-50 text-[10px] uppercase tracking-wide text-slate-500"><tr><th className="px-5 py-3">Name</th><th className="px-5 py-3">ID</th><th className="px-5 py-3">Role</th><th className="px-5 py-3">Department</th><th className="px-5 py-3">Status</th></tr></thead><tbody>{visible.map((row) => <tr key={row.id} className="border-t border-slate-100"><td className="flex items-center gap-2 px-5 py-4 font-semibold"><span className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-50 text-blue-600"><UserRound className="h-3.5 w-3.5" /></span>{row.name}</td><td className="px-5 py-4 font-mono text-slate-500">{row.id}</td><td className="px-5 py-4"><span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-1 text-[10px] font-semibold text-blue-700"><ShieldCheck className="h-3 w-3" />{row.role}</span></td><td className="px-5 py-4 text-slate-500">{row.department}</td><td className="px-5 py-4 font-semibold text-emerald-600">{row.status}</td></tr>)}</tbody></table></section></AdminPortalLayout>;
 }

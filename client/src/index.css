@@ -1,13 +1,48 @@
 @import "tailwindcss";
 
+:root {
+  --dc-navy: #0f1f36;
+  --dc-navy-soft: #172b47;
+  --dc-blue: #2563eb;
+  --dc-page: #f4f7fb;
+  --dc-border: #dbe4ef;
+  --dc-muted: #64748b;
+  --dc-card-shadow: 0 8px 24px rgb(15 31 54 / 0.05);
+}
+
 @layer base {
   body {
-    background-color: #f8fafc;
+    background-color: var(--dc-page);
     color: #0f172a;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family: "Avenir Next", Avenir, "Segoe UI", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+}
+
+.dc-page {
+  min-height: 100%;
+  background: var(--dc-page);
+}
+
+.dc-card {
+  border: 1px solid var(--dc-border);
+  border-radius: 14px;
+  background: white;
+  box-shadow: var(--dc-card-shadow);
+}
+
+.dc-eyebrow {
+  color: var(--dc-blue);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.dc-focus:focus-visible {
+  outline: 3px solid rgb(96 165 250 / 0.35);
+  outline-offset: 2px;
 }
 
 @media (min-width: 768px) {
@@ -82,9 +117,9 @@
   }
 
   :where([class~="bg-white"][class~="border"]):hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 24px rgb(15 23 42 / 0.08);
-    border-color: rgb(148 163 184 / 0.8);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 26px rgb(15 31 54 / 0.07);
+    border-color: rgb(148 163 184 / 0.65);
   }
 
   .dept-notifications-card,

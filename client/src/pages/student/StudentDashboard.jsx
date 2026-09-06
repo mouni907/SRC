@@ -48,7 +48,16 @@ export default function StudentDashboard() {
 
   return (
     <div className="space-y-6">
-
+      <section className="flex flex-col justify-between gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:flex-row sm:items-center">
+        <div>
+          <p className="dc-eyebrow">Student Portal</p>
+          <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900">Welcome, {student.name}</h1>
+          <p className="mt-1 text-sm text-slate-500">Track your No-Dues clearance progress from one place.</p>
+        </div>
+        <button type="button" onClick={() => navigate('/student/clearance')} className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-blue-700">
+          Review clearance <ArrowRight className="h-3.5 w-3.5" />
+        </button>
+      </section>
 
       {/* Top Grid: Progress Card + Certificate Status Card */}
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">

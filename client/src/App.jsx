@@ -21,6 +21,11 @@ import DepartmentReports from './pages/department/DepartmentReports';
 import DepartmentNotifications from './pages/department/DepartmentNotifications';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import VerifyCertificate from './pages/VerifyCertificate';
+import AdminRequests from './pages/admin/Requests';
+import AdminUsers from './pages/admin/Users';
+import AdminStatistics from './pages/admin/Statistics';
+import AdminAuditLogs from './pages/admin/AuditLogs';
+import AdminNotifications from './pages/admin/AdminNotifications';
 
 function StudentPortalLayout() {
   const location = useLocation();
@@ -44,7 +49,7 @@ function StudentPortalLayout() {
   }
 
   return (
-    <div id="digiclear-app" className="flex h-screen w-full overflow-hidden bg-slate-50 font-sans text-slate-900 antialiased">
+    <div id="digiclear-app" className="flex h-screen w-full overflow-hidden bg-[#f4f7fb] font-sans text-slate-900 antialiased">
       {/* Static Left Sidebar */}
       <Sidebar activeTab={activeTab} />
 
@@ -56,7 +61,7 @@ function StudentPortalLayout() {
         />
 
         {/* Dynamic Page Routes (Scrolls independently while sidebar remains static) */}
-        <main className="flex-1 p-6 sm:p-8 space-y-6 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto p-5 sm:p-7 space-y-6">
           <Routes>
             <Route path="dashboard" element={<StudentDashboard />} />
             <Route path="clearance" element={<ClearanceDetails />} />
@@ -111,6 +116,20 @@ function DepartmentPortalRoutes() {
   );
 }
 
+function AdminPortalRoutes() {
+  return (
+    <Routes>
+      <Route path="dashboard" element={<AdminDashboard />} />
+      <Route path="requests" element={<AdminRequests />} />
+      <Route path="users" element={<AdminUsers />} />
+      <Route path="statistics" element={<AdminStatistics />} />
+      <Route path="audit-logs" element={<AdminAuditLogs />} />
+      <Route path="notifications" element={<AdminNotifications />} />
+      <Route path="*" element={<Navigate to="dashboard" replace />} />
+    </Routes>
+  );
+}
+
 export default function App() {
   return (
     <AuthProvider>
@@ -149,7 +168,7 @@ export default function App() {
             path="/admin/*" 
             element={
               <ProtectedRoute allowedRoles={['admin']}>
-                <AdminDashboard />
+                <AdminPortalRoutes />
               </ProtectedRoute>
             } 
           />

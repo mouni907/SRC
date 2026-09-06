@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Search } from 'lucide-react';
+import { useClearance } from '../../context/ClearanceContext';
+import StatusBadge from '../../components/StatusBadge';
+import AdminPortalLayout from './AdminPortalLayout';
 
 export default function Requests() {
-  return (
-    <div className="p-6">
-      <h2 className="text-xl font-bold text-slate-900">Admin Requests</h2>
-      <p className="text-xs text-slate-500">Scheduled for Phase 10</p>
-    </div>
-  );
+  const { clearanceRequest, student } = useClearance();
+  const [query, setQuery] = useState('');
+  const matches = `${clearanceRequest?.id || ''} ${student?.name || ''} ${student?.collegeId || ''}`.toLowerCase().includes(query.toLowerCase());
+  return <AdminPortalLayout title="Clearance Requests"><section className="flex flex-col justify-between gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:flex-row sm:items-center"><div><h1 className="text-xl font-bold">Clearance Requests</h1><p className="mt-1 text-xs text-slate-500">Monitor student applications across all departments.</p></div><label className="relative block sm:w-72"><Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search student or request ID" className="h-9 w-full rounded-lg border border-slate-200 pl-9 pr-3 text-xs outline-none focus:border-blue-400" /></label></section><section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"><div className="overflow-x-auto"><table className="w-full min-w-[760px] text-left text-xs"><thead className="bg-slate-50 text-[10px] uppercase tracking-wide text-slate-500"><tr><th className="px-5 py-3">Request ID</th><th className="px-5 py-3">Student</th><th className="px-5 py-3">Student ID</th><th className="px-5 py-3">Departments Cleared</th><th className="px-5 py-3">Overall Status</th><th className="px-5 py-3">Submitted</th></tr></thead><tbody>{clearanceRequest?.id && matches && <tr className="border-t border-slate-100"><td className="px-5 py-4 font-mono font-semibold text-blue-700">#{clearanceRequest.id}</td><td className="px-5 py-4 font-semibold">{student.name}</td><td className="px-5 py-4 font-mono text-slate-500">{student.collegeId}</td><td className="px-5 py-4">{Object.values(clearanceRequest.departments).filter((item) => item.status === 'approved').length} / 4</td><td className="px-5 py-4"><StatusBadge status={clearanceRequest.overallStatus} /></td><td className="px-5 py-4 text-slate-500">{clearanceRequest.appliedAt}</td></tr>}</tbody></table>{(!clearanceRequest?.id || !matches) && <div className="p-10 text-center text-sm text-slate-500">No clearance requests match your search.</div>}</div></section></AdminPortalLayout>;
 }
