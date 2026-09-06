@@ -7,6 +7,7 @@ import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import LandingPage from './pages/LandingPage';
 import StudentDashboard from './pages/student/StudentDashboard';
 import ClearanceDetails from './pages/student/ClearanceDetails';
 import Certificate from './pages/student/Certificate';
@@ -173,9 +174,9 @@ export default function App() {
             } 
           />
 
-          {/* Root Redirect: sends to /login or user dashboard */}
-          <Route path="/" element={<RootRedirect />} />
-          <Route path="*" element={<RootRedirect />} />
+          {/* Public landing page */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="*" element={<LandingPage />} />
         </Routes>
       </ClearanceProvider>
     </AuthProvider>
